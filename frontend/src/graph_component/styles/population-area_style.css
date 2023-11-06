@@ -1,0 +1,94 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.head-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding: 0 10px;
+  background-color: #f1f1f1;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  box-shadow: 0px 5px 5px -5px grey;
+}
+
+.logo {
+  margin-left: 10px; /* Відступ між логотипом і іншим вмістом */
+  width: 150px; /* Задайте ширину логотипу відповідно до ваших потреб */
+  height: 50px;
+}
+
+.body-container {
+  display: flex;
+  flex-direction: row;
+  margin-top: 60px;
+}
+
+
+.graph-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 800px;
+  height: 550px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  margin: 50px auto;
+  border: 1px groove lightgrey;
+  background-color: white;
+}
+
+.select-container {
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.checkbox-container {
+  border: 1px solid black;
+  padding: 10px;
+  margin-right: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  max-height: 600px;
+}
+
+.h2-container {
+  text-align: center;
+  border-bottom: 1px solid black;
+  padding-bottom: 10px;
+}
+
+/*ScrollBar settings*/
+
+.checkbox-content {
+  margin-top: 10px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 15px;
+}
+
+.checkbox-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.checkbox-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.checkbox-content::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+.checkbox-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/*ScrollBar settings end*/
+
+

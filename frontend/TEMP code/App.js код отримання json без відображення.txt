@@ -1,0 +1,28 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const MyComponent = () => {
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        axios.get('http://localhost:8000/api/data/')  // Замініть на фактичний URL вашого API-ендпоінту
+            .then(response => {
+                setData(response.data);
+            })
+            .catch(error => {
+                console.error('Помилка при отриманні даних:', error);
+            });
+    }, []);  // Пустий масив залежностей гарантує, що ефект виконається лише після початкового рендерингу
+
+    return (
+        <div>
+            {data ? (
+                <pre>{JSON.stringify(data, null, 2)}</pre>
+            ) : (
+                <p>Завантаження даних...</p>
+            )}
+        </div>
+    );
+};
+
+export default MyComponent;

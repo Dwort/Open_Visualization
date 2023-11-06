@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Population Chart</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <link rel="stylesheet" href="../static/css/graph_page_style.css">
+</head>
+<body>
+    <div class="chart-container" id="chart-container">
+        <canvas id="populationChart" style="width:100%;max-width:600px"></canvas>
+    </div>
+
+    <script>
+
+        var ctx = document.getElementById('populationChart').getContext('2d');
+        var populationData = JSON.parse('{{ population_data_json|safe|escapejs }}');
+
+        var countries = [];
+        var populations = [];
+
+        for (var i = 0; i < populationData.length; i++) {
+            countries.push(populationData[i].country_name);
+            populations.push(populationData[i].population);
+        }
+        console.log(countries)
+        console.log(populations)
+
+        var barColors = ["red", "blue", "yellow", "green", "black", "grey"];
+
+        var chartData = {
+            labels: countries,
+            datasets: [{
+                label: 'Population',
+                data: populations,
+                backgroundColor: barColors,
+                borderWidth: 1
+            }]
+        };
+
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                legend: {display: false},
+                title: {
+                  display: true,
+                  text: "Countries population"
+                },
+                scales: {
+                  yAxes: [{
+                    ticks: {
+                      callback: function(value, index, values) {
+                        if (value === 0) {
+                          return '0';
+                        }
+
+                        var suffixes = ["", "K", "M", "B"];
+                        var order = Math.floor(Math.log(Math.abs(value)) / Math.log(1000));
+                        var suffix = suffixes[order];
+                        var shortValue = value / Math.pow(1000, order);
+
+                        if (shortValue % 1 !== 0) {
+                          shortValue = shortValue.toFixed(1);
+                        }
+
+                        return shortValue + suffix;
+                      }
+                    }
+                  }]
+                }
+              }
+        });
+    </script>
+</body>
+</html>

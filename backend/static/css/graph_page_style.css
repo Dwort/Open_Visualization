@@ -1,0 +1,16 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.chart-container {
+    width: 600px;
+    height: 400px;
+    margin: 50px; /* Відступ між графіками */
+    float: left; /* Розташування зліва */
+    /*border: 2px solid black; !* Чорна рамка товщиною 2 пікселі *!*/
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Тінь */
+}
