@@ -15,10 +15,7 @@ class PopulationPredictionView(APIView):
         df = pd.read_csv('populations.csv')
 
         # Вибір рядка з назвою країни
-        country_row = df[df['Country_Name'] == country]
-
-        # Витягнення назви країни для майбутнього використання у відповіді
-        country_name = country_row['Country_Name'].values[0]
+        country_row = df[df['Country_Code'] == country]
 
         # Вибір даних про населення (з другого стовпця до кінця)
         population_data = country_row.iloc[:, 1:].values.flatten()
@@ -45,7 +42,6 @@ class PopulationPredictionView(APIView):
 
         # Створення словника з результатами
         result = {
-            'country': country_name,
             'prediction': prediction_values[0],
             'lower_border': prediction_values[1],
             'upper_border': prediction_values[2]

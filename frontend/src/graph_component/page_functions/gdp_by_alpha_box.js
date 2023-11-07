@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/GdpByAlphaCode.css'
+import '../graph_styles/GdpByAlphaCode.css'
 
 function GdpByAlphaCode({ onDataReceived }){
   const [buttonCountries, setButtonCountries] = useState([]);

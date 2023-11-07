@@ -3,7 +3,7 @@ import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, LinearScale } from "chart.js/auto";
 import CountryInfoApp from "./page_functions/countries_checkbox";
 import logo from "../front_additions/logo_open_visualization.jpg"
-import './styles/population-area_style.css'
+import './graph_styles/population-area_style.css'
 
 
 function Populations(){

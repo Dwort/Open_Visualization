@@ -3,7 +3,7 @@ import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, LinearScale } from "chart.js/auto";
 import GdpByAlphaCode from "./page_functions/gdp_by_alpha_box";
 import logo from "../front_additions/logo_open_visualization.jpg"
-import './styles/population-area_style.css'
+import './graph_styles/population-area_style.css'
 
 
 function GdpByAlpha(){
@@ -47,7 +47,7 @@ function GdpByAlpha(){
             shortValue = shortValue.toFixed(1);
           }
 
-          return shortValue + suffix;
+          return "$ " + shortValue + suffix;
         },
         color: 'black'
       }

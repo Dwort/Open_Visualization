@@ -1,23 +1,37 @@
 import React, {useState, useEffect} from 'react';
 import axios from 'axios';
+import '../graph_component/graph_styles/population-area_style.css'
+import './prediction_styles/populationPredict.css'
+import logo from "../front_additions/logo_open_visualization.jpg";
 
 const PopulationPrediction = () => {
 
-  const [country, setCountry] = useState('Ukraine');
+  const [buttonCountries, setButtonCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [year, setYear] = useState(2050);
   const [prediction, setPrediction] = useState(null);
   const [lower, setLower] = useState(null);
   const [upper, setUpper] = useState(null);
 
+  const handleCountryClick = (alphaCode) => {
+    setSelectedCountry(alphaCode);
+    getPopulationPrediction(alphaCode, year);
+  };
 
   useEffect(() => {
-    getPopulationPrediction();
-  }, [country, year]);
+    axios.get("http://127.0.0.1:8000/api/countries/")
+      .then((response) => {
+        setButtonCountries(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching buttonCountries:", error);
+      });
+  }, []);
 
-  const getPopulationPrediction = async () => {
+  const getPopulationPrediction = async (alphaCode, year) => {
     const response = await axios.get('http://127.0.0.1:8000/predict/population/', {
       params: {
-        country: country,
+        country: alphaCode,
         year: year
       }
     });
@@ -27,25 +41,45 @@ const PopulationPrediction = () => {
   }
 
   return (
-    <div>
-      <select value={country} onChange={e => setCountry(e.target.value)}>
-        <option value="Ukraine">Ukraine</option>
-        <option value="United States">USA</option>
-        <option value="China">China</option>
-      </select>
-
-      <input
-        type="number"
-        value={year}
-        onChange={e => setYear(e.target.value)}
-      />
-
-      <div>
-        <h3>Prediction: {prediction}</h3>
-        <p>Lower border: {lower}</p>
-        <p>Upper border: {upper}</p>
+    <div className="main-container">
+      <div className="head-container">
+        <img src={logo} alt="Логотип компанії" className="logo" />
       </div>
+      <div className="body-container">
 
+        <div className="predict-date-container">
+          <input
+            type="number"
+            value={year}
+            onChange={e => setYear(e.target.value)}
+          />
+
+          <div className="predict-container">
+            <h3>Prediction: {prediction}</h3>
+            <p>Lower border: {lower}</p>
+            <p>Upper border: {upper}</p>
+          </div>
+        </div>
+
+        <div className="checkbox-container">
+          <div className="h2-container">
+            <h2>Список країн</h2>
+          </div>
+          <div className="checkbox-content">
+            <div className="button-container-predict">
+              {buttonCountries.map((country) => (
+                <button className="button-4"
+                  key={country.alphaCode}
+                  onClick={() => handleCountryClick(country.alphaCode)}
+                  disabled={selectedCountry === country.alphaCode}
+                >
+                  {country.country_name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 
