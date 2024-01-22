@@ -1,3 +1,7 @@
+.main-container.prediction {
+  background-color: white;
+}
+
 .button-container-predict {
   display: flex;
   flex-direction: column;
@@ -72,4 +76,19 @@
   border: 1px groove lightgrey;
   background-color: white;
   flex-direction: column;
+}
+
+.predict-date-container {
+  display: flex;
+  flex-direction: column; /* Розміщення елементів у колонку */
+  justify-content: center;
+  margin-left: 600px;
+  margin-top: 100px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.7);
+  height: 320px;
+  width: 550px;
+}
+
+p {
+  text-align: center;
 }

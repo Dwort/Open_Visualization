@@ -1,3 +1,7 @@
+.main-container {
+  background-color: #e3f9fc;
+}
+
 .button-container {
   display: flex;
   justify-content: center;
@@ -7,24 +11,154 @@
   margin: 200px 20px;
 }
 
+.button-wrapper.graph {
+  margin: -120px 20px;
+}
+
 .custom-button {
-  width: 100%;
-  padding: 50px;
+  width: 220px;
+  padding: 30px;
   background-color: #FFFFFF;
   color: black;
-  border: 1px groove black;
+  border: 3px groove black;
   border-radius: 10px;
   text-align: center;
   text-decoration: none;
   font-size: 16px;
   cursor: pointer;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.7);
   transition: background-color 0.2s;
+  position: relative;
+  display: inline-block;
 }
 
 .custom-button:hover {
   background-color: #DCDCDC; /* Light gray */
 }
 
+/* Style for icon and buttons*/
 
+.icon {
+  position: absolute;
+  top: -55px; /* відступ зверху */
+  left: 50%; /* центрування */
+  transform: translateX(-50%);
+  width: 80px; /* ширина зображення */
+  height: auto; /* автоматична висота */
+}
 
+.button-text {
+  display: block;
+  margin-top: 5px; /* відступ між зображенням та текстом */
+  font-size: 16px; /* розмір тексту */
+  text-align: center;
+  font-weight: bold;
+}
+
+.icon.icon2 {
+  top: -52px;
+}
+
+.icon.icon3 {
+  top: -47px;
+}
+
+.custom-button.graph {
+  width: 250px;
+  height: 90px;
+}
+
+.buttons-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* END Style for icon and buttons*/
+
+.text-video-container {
+  display: flex;
+  height: 360px;
+  background-color: lightgray;
+  justify-content: space-between;
+}
+
+.text-v-context {
+  width: 500px;
+  height: auto;
+  text-align: center;
+  margin-top: 70px;
+  margin-left: 100px;
+}
+
+.text-v-context p {
+  color: black; /* Колір тексту - білий */
+  font-size: 15px; /* Розмір тексту */
+  text-align: justify;
+}
+
+.text-v-context h6 {
+  color: black;
+  margin-left: 270px;
+}
+
+.video-context video {
+  width: 600px;
+  height: 320px;
+  margin-top: 20px;
+}
+
+.text-about-context {
+  background-color: lightgray;
+  height: 480px;
+}
+
+.text-about {
+  margin-left: 100px;
+}
+
+.text-about h1 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: black;
+}
+
+.text-about p {
+  color: black;
+  text-align: justify;
+  font-size: 16px;
+  width: 1200px;
+  line-height: 2;
+}
+
+.line {
+  height: 5px; /* Висота лінії */
+  margin-left: 60px; /* Відступ зліва */
+  margin-right: 60px; /* Відступ справа */
+  background-color: black; /* Сірий колір */
+  border-radius: 5px; /* Заокруглені краї */
+}
+
+.cooperation-context {
+  background-color: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.cooperation-context h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 20px;
+}
+
+.partners {
+  width: 1200px;
+  height: 180px;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 60px;
+}

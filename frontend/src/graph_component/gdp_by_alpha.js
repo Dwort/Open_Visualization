@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, LinearScale } from "chart.js/auto";
 import GdpByAlphaCode from "./page_functions/gdp_by_alpha_box";
-import logo from "../front_additions/logo_open_visualization.jpg"
 import './graph_styles/population-area_style.css'
+import Header from "../main_page_dir/Header";
 
 
 function GdpByAlpha(){
@@ -11,21 +11,21 @@ function GdpByAlpha(){
 
   const [gdpData, setGdpData] = useState([]);
   const [gdpType, setGdpType] = useState('Line');
-
+  const reversedGdpData = [...gdpData].reverse(); // Створюємо копію масиву, щоб не змінювати його оригінал
 
   const graph_data = {
-    labels: gdpData.map((data) => data.year),
+    labels: reversedGdpData.map((data) => data.year),
     datasets: [
       {
         label: 'Countries gdp',
-        data: gdpData.map((data) => data.gdp),
+        data: reversedGdpData.map((data) => data.gdp),
         backgroundColor: ["red", "blue", "yellow", "green", "purple", "grey", "pink", "orange", "brown", "lightblue"],
         borderColor: "black",
         borderWidth: 1,
       },
     ]
   };
-  console.log(gdpData)
+
   const bar_line_options= {
     layout: {
       padding: 20
@@ -61,7 +61,7 @@ function GdpByAlpha(){
     plugins: {
       title: {
         display: true,
-        text: gdpData.length > 0 ? `GDP of ${gdpData[0].country}` : 'GDP of ',
+        text: gdpData.length > 0 ? `ВВП країни - ${gdpData[0].country}` : 'ВВП - ',
         padding: {
           top: 10,
           bottom: 30
@@ -102,19 +102,44 @@ function GdpByAlpha(){
 
   return (
     <div className="main-container">
-      <div className="head-container">
-        <img src={logo} alt="Логотип компанії" className="logo" />
-      </div>
+      <Header />
       <div className="body-container">
-        <div className="select-container">
-          <label>
-            <select onChange={(e) => setGdpType(e.target.value)}>
-              <option value="Line">Line</option>
-              <option value="Bar">Bar</option>
-              <option value="Pie">Pie</option>
-              <option value="Doughnut">Doughnut</option>
-            </select>
-          </label>
+        <div className="left-container">
+          <div className="select-container">
+            <details className="custom-select">
+              <summary className="radios">{gdpType}</summary>
+              <ul className="list">
+                <li>
+                  <label htmlFor="Line" onClick={() => setGdpType('Line')}>
+                    Line
+                    <span></span>
+                  </label>
+                </li>
+                <li>
+                  <label htmlFor="Bar" onClick={() => setGdpType('Bar')}>
+                    Bar
+                    <span></span>
+                  </label>
+                </li>
+                <li>
+                  <label htmlFor="Pie" onClick={() => setGdpType('Pie')}>
+                    Pie
+                    <span></span>
+                  </label>
+                </li>
+                <li>
+                  <label htmlFor="Doughnut" onClick={() => setGdpType('Doughnut')}>
+                    Doughnut
+                    <span></span>
+                  </label>
+                </li>
+              </ul>
+            </details>
+          </div>
+
+          <div className="download-button">
+
+          </div>
         </div>
 
         <div className="graph-container">

@@ -1,0 +1,54 @@
+.custom-offcanvas-button {
+    width: 110px;
+    height: 40px;
+    margin-left: 30px;
+    margin-top: 50px;
+    font-size: 22px;
+}
+
+.link-list {
+    margin-left: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    text-decoration: none;
+    color: black;
+}
+
+.line-link {
+    height: 3px;
+    background-color: #828282;
+    border-radius: 5px;
+    width: calc(100% - 16px);
+    margin: 0 auto;
+}
+
+.menu-head-container {
+    background-color: #F1FAF8;
+}
+
+.menu-body-container {
+    background-color: #F2FEFF;
+}
+
+.social-media-menu {
+    display: block;
+    width: max-content;
+    /*margin: 5px auto;*/
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.social-media-menu p {
+    font-size: 13px;
+}
+
+.social-logo {
+    width: 40px;
+    height: auto;
+    margin-left: 20px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}

@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'graph_builder',
     'analysis_and_prediction',
+    'authorization',
     'rest_framework',
     'corsheaders',
+    'premium',
 ]
 
 MIDDLEWARE = [
@@ -97,6 +99,8 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
+
+AUTH_USER_MODEL = 'authorization.User'
 
 AUTH_PASSWORD_VALIDATORS = [
     {

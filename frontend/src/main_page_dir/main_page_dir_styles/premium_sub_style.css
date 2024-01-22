@@ -1,0 +1,114 @@
+.premium-main-container {
+  background-color: #d3d3d3;
+}
+
+.premium-container {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.premium-block {
+    background-color: white;
+    display: flex;
+    width: 300px;
+    height: 500px;
+    flex-direction: column;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+    margin: 15px;
+    position: relative;
+}
+/* UPPER TEXT */
+.blue-text {
+    background-color: dodgerblue;
+    color: white;
+}
+
+.white-text {
+    background-color: white;
+    color: white;
+}
+
+.lavanda-text {
+    background-color: #d61adc;
+    color: white;
+}
+
+.green-text {
+    background-color: green;
+    color: white;
+}
+
+.premium-top h3 h4 {
+    color: #040436;
+}
+
+.premium-top h4 {
+    font-size: 50px;
+}
+/* END UPPER TEXT */
+
+.premium-bonus {
+    width: 280px;
+    margin: 20px 10px 0 10px;
+}
+
+.premium-bonus p {
+    text-align: left;
+}
+
+.premium-remark {
+    margin-top: 70px;
+    font-size: 13px;
+}
+
+.premium-block:last-child .premium-remark {
+    margin-top: 30px;
+}
+
+.premium-block:first-child .premium-bonus {
+    margin-top: 54px;
+}
+
+/* Buttons BUY */
+.button-buy {
+  width: 75%;
+  height: 45px;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  background-color: #13aa52;
+  border: 1px solid #13aa52;
+  border-radius: 4px;
+  box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  font-family: "Akzidenz Grotesk BQ Medium", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  outline: none;
+  outline: 0;
+  padding: 10px 25px;
+  text-align: center;
+  transform: translateY(0) translateX(-50%);
+  transition: transform 150ms, box-shadow 150ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-buy:hover {
+  box-shadow: rgba(0, 0, 0, .15) 0 3px 9px 0;
+  transform: translateY(-2px) translateX(-50%);
+}
+
+@media (min-width: 768px) {
+  .button-buy {
+    padding: 10px 30px;
+  }
+}
+
+/* END OF BUTTONS STYLE */

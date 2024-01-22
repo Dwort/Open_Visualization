@@ -19,6 +19,12 @@ const PopulationPrediction = () => {
   };
 
   useEffect(() => {
+  if(selectedCountry !== null) {
+    getPopulationPrediction(selectedCountry, year); // Оновлення при зміні року
+  }
+}, [year]);
+
+  useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/countries/")
       .then((response) => {
         setButtonCountries(response.data);
@@ -35,30 +41,39 @@ const PopulationPrediction = () => {
         year: year
       }
     });
+
     setPrediction(response.data.prediction);
     setLower(response.data.lower_border);
     setUpper(response.data.upper_border);
   }
 
   return (
-    <div className="main-container">
+    <div className="main-container prediction">
       <div className="head-container">
         <img src={logo} alt="Логотип компанії" className="logo" />
       </div>
       <div className="body-container">
 
         <div className="predict-date-container">
-          <input
-            type="number"
-            value={year}
-            onChange={e => setYear(e.target.value)}
-          />
-
+          {/*<input*/}
+          {/*  type="number"*/}
+          {/*  value={year}*/}
+          {/*  onChange={e => setYear(parseInt(e.target.value))}*/}
+          {/*/>*/}
           <div className="predict-container">
-            <h3>Prediction: {prediction}</h3>
-            <p>Lower border: {lower}</p>
-            <p>Upper border: {upper}</p>
+            <h3>Прогнозоване значення: {parseInt(prediction).toLocaleString('en-US') + "  млн."}</h3>
+            <p>Нижня межа прогнозу: {parseInt(lower).toLocaleString('en-US') + "  млн."}</p>
+            <p>Верхня межа прогнозу: {parseInt(upper).toLocaleString('en-US') + "  млн."}</p>
           </div>
+          <input
+            type="range"
+            min = {2024}
+            max = {2050}
+            step={1}
+            value={year}
+            onChange={e => setYear(parseInt(e.target.value))}
+          />
+           <p>Обраний рік: {year}</p>
         </div>
 
         <div className="checkbox-container">

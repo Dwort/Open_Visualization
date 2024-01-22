@@ -1,0 +1,94 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f7f7f7;
+  padding: 10px 20px;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.4);
+  height: 60px;
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+}
+
+.head-logo {
+  width: 280px;
+  height: auto;
+}
+
+.user-page-icon {
+  width: 40px;
+  height: auto;
+  cursor: pointer;
+}
+
+.sigh-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sigh-action a {
+  color: black;
+  font-weight: bold;
+  margin-right: 10px;
+  text-decoration: none;
+}
+
+.sigh-action a:hover {
+  text-decoration: underline;
+  color: #555555;
+}
+
+.login-button,
+.register-button {
+  background-color: green; /* світло-зелений колір кнопок */
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.other-services {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.other-services a {
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+.other-services a:hover {
+  text-decoration: underline;
+  color: #555555;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+  text-decoration: none;
+}
+
+.logo-container a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.logo-container a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.logo-container p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bolder;
+  text-decoration: none;
+  color: inherit;
+}

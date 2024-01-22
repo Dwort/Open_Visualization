@@ -7,11 +7,13 @@ import StatisticsPage from "./main_page_dir/Statistics";
 import Populations from "./graph_component/populations";
 import Area from "./graph_component/areas";
 import GdpByAlpha from "./graph_component/gdp_by_alpha";
+import GdpAll from "./graph_component/gdp_all";
 import PopulationPrediction from "./prediction_component/population_prediction";
 import PredictionPage from "./main_page_dir/Predictions";
-// import DoughnutChart from "./graph_component/Doughnut";
-// import CountryInfoApp from "./graph_component/page_functions/countries_checkbox";
-
+import PremiumSub from "./main_page_dir/premium/premium_sub"
+import Registration from "./main_page_dir/auth/registration";
+import Login from "./main_page_dir/auth/login";
+import UserProfile from "./main_page_dir/auth/user_page";
 
 
 function App() {
@@ -19,14 +21,21 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/premium" element={<PremiumSub />} />
+        <Route path="/registration" element={<Registration />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/user" element={<UserProfile />} />
+
         <Route path="/chart" element={<ChartPage />} />
           <Route path="/chart/population" element={<Populations />} />
           <Route path="/chart/area" element={<Area />} />
-          <Route path="/chart/gdp" element={<GdpByAlpha />} />
-          {/*<Route path="/chart/doughnut" element={<DoughnutChart />} />*/}
+          <Route path="/chart/history-gdp" element={<GdpByAlpha />} />
+          <Route path="/chart/gdp" element={<GdpAll />} />
 
         <Route path="/map" element={<InteractiveMapPage />} />
+
         <Route path="/statistics" element={<StatisticsPage />} />
+
         <Route path="/prediction" element={<PredictionPage />} />
           <Route path="/prediction/population" element={<PopulationPrediction />} />
       </Routes>

@@ -1,0 +1,51 @@
+.user-page-main {
+    background-color: #dadada;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.user-data-container {
+    width: 1200px;
+    height: 600px;
+    margin-top: 80px;
+    position: relative;
+    background-color: white;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+}
+
+.user-data {
+    box-shadow: rgba(0, 0, 0, .4) 0 2px 4px 0;
+    margin-top: 40px;
+
+}
+
+.info-menu-block {
+    display: flex;
+    width: 50%;
+    justify-content: space-between;
+    /*margin-right: 500px;*/
+    box-shadow: rgba(0, 0, 0, .4) 0 2px 4px 0;
+}
+
+.button-block {
+    width: 200px;
+    position: absolute;
+	bottom: 20px;
+	right: 30px;
+
+    /*box-shadow: rgba(0, 0, 0, .9) 0 2px 4px 0;*/
+}
+
+.edit-button {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+	top: 20px;
+	right: 30px;
+}
+
+

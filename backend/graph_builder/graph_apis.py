@@ -15,3 +15,4 @@ def fetch_gdp_data(alpha_code):
     if response.status_code == 200:
         return response.json()[1]
     return None
+

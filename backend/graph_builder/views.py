@@ -4,7 +4,6 @@ from .serializers import *
 from .graph_apis import *
 
 
-
 class GetRestApiInfo:
     def get_population(self, alpha_code):
         data = fetch_data_restcountries(alpha_code)
@@ -74,15 +73,30 @@ class GDPView(APIView):
 
         output = []
         for item in response:
-            year = item.get('date', 'N/A')  # Отримуємо значення за ключем 'date', якщо ключ існує, інакше None
+            year = item.get('date', 'N/A')
             if year:
                 output.append({
                     'country': country.country_name,
                     'year': year,
-                    'gdp': item.get('value', 0)  # Отримуємо значення за ключем 'value', якщо ключ існує, інакше 0
+                    'gdp': item.get('value', 0)
                 })
 
         serializer = GDPSerializer(output, many=True)
+        return Response(serializer.data)
+
+
+class Testcls(APIView):
+    def get(self, request):
+        url = 'https://ec.europa.eu/eurostat/wdds/rest/data/v2.1/json/en/crim_off_cat?time=2019&geo=FR&crime=ROBBERY'
+
+        response = requests.get(url)
+        print("CHECK HERE")
+        print(response.text)
+        data = response.json()
+
+        serializer = CrimeDataSerializer(data=data.get('observations', []), many=True)
+
+        # Поверніть відповідь у форматі JSON
         return Response(serializer.data)
 
 # class UkraineGDPView(APIView):

@@ -25,5 +25,6 @@ urlpatterns = [
     path('api/population/<str:alpha_code>/', GetPopulationByAlpha.as_view(), name='country-by-alpha'),
     path('api/countries/', GetAllCountries.as_view(), name='all-countries'),
     path('api/gdp/<str:alpha_code>/', GDPView.as_view(), name='gdp'),
-    path('predict/population/', PopulationPredictionView.as_view())
+    path('predict/population/', PopulationPredictionView.as_view()),
+    path('api/', include('authorization.urls')),
 ]

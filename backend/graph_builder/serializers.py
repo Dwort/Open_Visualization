@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from graph_builder.models import Country
-from decimal import Decimal
 
 
 class PopulationSerializer(serializers.ModelSerializer):
@@ -38,3 +37,7 @@ class GDPSerializer(serializers.Serializer):
     class Meta:
         model = Country
         fields = ['country_name', 'year', 'gdp']
+
+
+class CrimeDataSerializer(serializers.Serializer):
+    robberies = serializers.IntegerField(source='value.Robberies', default=0)

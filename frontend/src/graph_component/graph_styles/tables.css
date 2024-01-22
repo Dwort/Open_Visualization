@@ -1,0 +1,56 @@
+/*.table-container {*/
+/*  display: flex;*/
+/*  justify-content: center;*/
+/*  align-items: center;*/
+/*  width: 800px;*/
+/*  height: 400px;*/
+/*  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);*/
+/*  margin: 50px auto;*/
+/*  border: 1px groove lightgrey;*/
+/*  background-color: white;*/
+/*  overflow: hidden; !* Додаємо це *!*/
+/*}*/
+
+/*table {*/
+/*  width: 96%; !* Ширина таблиці *!*/
+/*  margin: auto; !* Вирівнювання по центру *!*/
+/*  border-collapse: collapse; !* Злиття рамок *!*/
+/*}*/
+
+/*th {*/
+/*  background-color: #dfe6f2; !* Колір рядка з назвами таблиць *!*/
+/*  border: 1px solid black; !* Контур *!*/
+/*  padding: 8px; !* Відступи *!*/
+/*  text-align: center; !* Вирівнювання тексту по центру *!*/
+/*}*/
+
+/*td {*/
+/*  border: 1px solid black; !* Контур *!*/
+/*  padding: 8px; !* Відступи *!*/
+/*  text-align: center; !* Вирівнювання тексту по центру *!*/
+/*}*/
+
+/*.checkbox-content {*/
+/*  max-height: 100%; !* Змінюємо max-height на 100% *!*/
+/*  overflow-y: auto;*/
+/*  padding-right: 15px;*/
+/*  width: 100%; !* Додаємо це *!*/
+/*}*/
+
+/*.checkbox-content::-webkit-scrollbar {*/
+/*  width: 10px;*/
+/*}*/
+
+/*.checkbox-content::-webkit-scrollbar-track {*/
+/*  background: #f1f1f1;*/
+/*  border-radius: 10px;*/
+/*  padding: 10px;*/
+/*}*/
+
+/*.checkbox-content::-webkit-scrollbar-thumb {*/
+/*  background: #888;*/
+/*}*/
+
+/*.checkbox-content::-webkit-scrollbar-thumb:hover {*/
+/*  background: #555;*/
+/*}*/
