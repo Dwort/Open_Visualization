@@ -5,10 +5,12 @@ import "./auth_style/logout.css"
 const Logout = () => {
     const handleLogout = async () => {
 
-        document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        // document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/user/logout/');
+            const response = await axios.post('http://127.0.0.1:8000/api/user/logout/', {},{
+                withCredentials: true
+            });
 
             if(response.status === 200) {
                 document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
@@ -17,7 +19,7 @@ const Logout = () => {
                 console.error("Error with deleting Access Token through API")
             }
         } catch (error) {
-            console.log('Error with Token deleting', error)
+            console.log('Error with Token deleting: ', error)
         }
     }
     return (

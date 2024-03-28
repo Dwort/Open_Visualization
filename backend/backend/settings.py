@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ SECRET_KEY = 'django-insecure-#2@v9=hha%8v*y+$y_dvmlnzzt+-()6mq%%0_3=y67mde)7o18
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -46,21 +47,52 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
+# CORS Settings ____________________________
+
 CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+# ___________________________________________
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15,  # Таймаут кешування за замовчуванням (у секундах)
+    'DEFAULT_CACHE_HEADERS': True,  # Включення кеш-заголовків у відповідях
+    'DEFAULT_CACHE_BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # Використовуйте кеш у пам'яті
 }
+
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -94,6 +126,14 @@ DATABASES = {
         'PASSWORD': 'Denial_22_sql',
         'HOST': 'localhost',
         'PORT': '5432',
+    }
+}
+
+# Налаштування кешування
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # Використовуйте кеш у пам'яті
+        'LOCATION': 'unique-snowflake',  # Унікальний ідентифікатор
     }
 }
 
@@ -132,6 +172,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+SITE_URL = 'http://localhost:3000'
+
+STRIPE_SECRET_KEY = 'sk_test_51OdWKdAqT4llOodTY7qpu3NiAlb4xbOMPHYtcO6tQQ0m91iX8sA6arKDVFMCltc5MHckCaVP621i3R2MAxmgkOyL00X0isPLei'
+
+CSP_FONT_SRC = ["'self'", "https://js.stripe.com"]
+
+WEBHOOK_SECRET_KEY = 'whsec_atRSBg4LfKucEEDAGGsWoHT3ulgAVPvS'
+
+ENCRYPT_KEY = os.environ['ENCRYPT_KEY']
+
+IV = b'1101010110101101'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

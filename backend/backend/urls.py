@@ -27,4 +27,5 @@ urlpatterns = [
     path('api/gdp/<str:alpha_code>/', GDPView.as_view(), name='gdp'),
     path('predict/population/', PopulationPredictionView.as_view()),
     path('api/', include('authorization.urls')),
+    path('api/', include('premium.urls')),
 ]

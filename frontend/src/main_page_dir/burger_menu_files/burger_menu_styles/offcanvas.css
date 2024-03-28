@@ -12,6 +12,8 @@
     margin-bottom: 10px;
     text-decoration: none;
     color: black;
+    text-align: left;
+    cursor: pointer;
 }
 
 .line-link {

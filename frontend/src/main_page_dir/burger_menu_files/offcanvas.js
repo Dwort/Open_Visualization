@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Button from 'react-bootstrap/Button';
 import Offcanvas from 'react-bootstrap/Offcanvas';
-import "./auth_style/offcanvas.css"
+import "./burger_menu_styles/offcanvas.css"
 import {ListGroup} from "react-bootstrap";
 import {Link} from "react-router-dom";
 import Telegram from "../../front_additions/social/telegram.png"
 import Facebook from "../../front_additions/social/facebook.png"
 import Twitter from "../../front_additions/social/twitter.png"
 import Instagram from "../../front_additions/social/instagram.png"
+import {get_token_export} from "../auth/user_page";
+import axios from "axios";
 
 
 function OffCanvas() {
@@ -15,6 +17,24 @@ function OffCanvas() {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+
+  const handleCheck = async () => {
+    const token = get_token_export()
+    try {
+        const response = await axios.post('http://127.0.0.1:8000/api/premium/create-portal-session/', null, {
+           headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+        });
+
+        const { redirect_url } = response.data
+        window.location.href = redirect_url;
+    }
+    catch (error) {
+        alert('You don\'t have a Premium status. You can buy it in the price section')
+        window.location.href = '/premium'
+    }
+  };
 
   return (
     <>
@@ -29,27 +49,27 @@ function OffCanvas() {
         <Offcanvas.Body className="menu-body-container">
           <ListGroup className="list-group">
               <Link to="http://localhost:3000/user/" className="link-list">
-                <h5>Profile</h5>
+                Profile
               </Link>
               <div className="line-link"></div>
               <Link to="http://localhost:3000/user/projects/" className="link-list">
-                <h5>My Projects</h5>
+                My Projects
               </Link>
               <div className="line-link"></div>
-              <Link to="http://localhost:3000/user/premium/" className="link-list">
-                <h5>Premium</h5>
+              <Link to="#" className="link-list" onClick={handleCheck}>
+                Premium
               </Link>
               <div className="line-link"></div>
               <Link to="http://localhost:3000/user/terms/" className="link-list">
-                <h5>Terms and Conditions</h5>
+                Terms and Conditions
               </Link>
               <div className="line-link"></div>
               <Link to="http://localhost:3000/user/faq/" className="link-list">
-                <h5>F.A.Q.</h5>
+                F.A.Q.
               </Link>
               <div className="line-link"></div>
               <Link to="http://localhost:3000/user/support/" className="link-list">
-                <h5>Support</h5>
+                Support
               </Link>
           </ListGroup>
           <div className="social-media-menu">

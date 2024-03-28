@@ -1,0 +1,55 @@
+.terms-main-container {
+    background-color: #dadada;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.terms-data-container {
+    display: flex;
+    align-items: flex-start;
+    width: 900px;
+    height: auto;
+    margin-top: 80px;
+    margin-bottom: 10px;
+    position: relative;
+    background-color: white;
+    flex-direction: column;
+    box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+}
+
+.custom-terms-offcanvas-style {
+    align-self: flex-start;
+}
+
+.terms-text-block {
+    align-self: center;
+    width: 800px;
+    padding: 15px;
+}
+
+.terms-text-block h2 {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 10px;
+}
+
+.terms-text-block h3 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.terms-text-block p {
+    text-align: justify;
+}
+
+.terms-copyright {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 50px;
+    /*padding-top: 10px;*/
+    align-items: center;
+}

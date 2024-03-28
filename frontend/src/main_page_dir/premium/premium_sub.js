@@ -1,12 +1,44 @@
 import React from 'react';
+import axios from "axios";
 import Header from "../Header";
 import "../main_page_dir_styles/premium_sub_style.css"
+import {get_token_export} from "../auth/user_page";
+
+
 function PremiumSub() {
+
+    const handleGetButton = (buyAPI) => {
+        const token = get_token_export();
+        if (token && buyAPI){
+             buySubmit(buyAPI);
+        }
+        else {
+             alert('YOU NEED A REGISTER OR LOG IN FOR BUYING PREMIUM STATUS!!!')
+        }
+    }
+
+    const buySubmit = async (selectedSub) => {
+        try {
+
+          const response = await axios.post("http://127.0.0.1:8000/api/premium/buy/", {
+            'price': selectedSub
+          });
+
+          const { redirect_url } = response.data;
+          // window.location.href = redirect_url;
+            console.log(redirect_url)
+
+        } catch (error) {
+          console.error('Error submitting request:', error);
+        }
+    };
+
     return (
         <div className="premium-main-container">
             <Header />
+
             <div className="premium-container">
-                <div className="premium-block">
+                <section className="premium-block">
                     <p className="white-text">...</p>
                     <div className="premium-top">
                         <h3>No<br/>Subscription</h3>
@@ -18,8 +50,9 @@ function PremiumSub() {
                         <p>- Limited use of prediction.</p>
                         <p>- Limited topics to work on.</p>
                     </div>
-                </div>
-                <div className="premium-block">
+                </section>
+
+                <section className="premium-block">
                     <p className="lavanda-text">FIRST CHOICE</p>
                     <div className="premium-top">
                         <h3>Junior</h3>
@@ -33,16 +66,17 @@ function PremiumSub() {
                     </div>
                     <p className="premium-remark">* You can unsubscribe in your personal cabinet.</p>
                     <button
-                        className="button-buy"
+                        className="button-buy" onClick={() => handleGetButton('price_1OdWRrAqT4llOodThgl7WlMv')}
                         >
                         Buy now
                     </button>
-                </div>
-                <div className="premium-block">
+                </section>
+
+                <section className="premium-block">
                     <p className="blue-text">MOST POPULAR</p>
                     <div className="premium-top">
                         <h3>Middle</h3>
-                        <h4>$ 1.99</h4>
+                        <h4>$ 2.99</h4>
                     </div>
                     <div className="premium-bonus">
                         <p>- 100 counts of usage per month.</p>
@@ -52,12 +86,13 @@ function PremiumSub() {
                     </div>
                     <p className="premium-remark">* You can unsubscribe in your personal cabinet.</p>
                     <button
-                        class="button-buy"
+                        className="button-buy" onClick={() => handleGetButton('price_1OebaaAqT4llOodTBN9YpjjU')}
                         >
                         Buy now
                     </button>
-                </div>
-                <div className="premium-block">
+                </section>
+
+                <section className="premium-block">
                     <p className="green-text">BEST VALUE</p>
                     <div className="premium-top">
                         <h3>Senior</h3>
@@ -72,11 +107,11 @@ function PremiumSub() {
                     </div>
                     <p className="premium-remark">* You can unsubscribe in your personal cabinet.</p>
                     <button
-                        className="button-buy"
+                        className="button-buy" onClick={() => handleGetButton('price_1OebmLAqT4llOodTI8O8z360')}
                         >
                         Buy now
                     </button>
-                </div>
+                </section>
             </div>
         </div>
     );
