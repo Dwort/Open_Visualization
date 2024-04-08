@@ -1,54 +1,48 @@
-import jwt
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from authorization.models import User
 from premium.models import Premium
 from rest_framework import status
 from django.conf import settings
 from django.core.cache import cache
-from premium.utils import Encrypt, SetPremium
+from premium.utils import Encrypt, SetPremium, PremiumModify
 import stripe
+import jwt
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
-# Comment: this class return all data about premium from DB to frontend part
-
-# class GetPremiumAPIView(APIView):
-#     def get(self, request):
-#         user_id = request.query_params.get('user_id')
-#         try:
-#             premium = Premium.objects.get(user_id=user_id)
-#             serializer = PremiumSerializer(premium)
-#
-#             return Response(serializer.data)
-#         except Exception as e:
-#             return Response(
-#                 f"ERROR: {e}", status=status.HTTP_404_NOT_FOUND
-#             )
-
-
 class CreateCheckoutSessionView(APIView):
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.modify = PremiumModify()
+
     def post(self, request):
-        try:
-            price = request.data.get('price', None)
 
-            checkout_session = stripe.checkout.Session.create(
-                line_items=[
-                    {
-                        'price': price,
-                        'quantity': 1,
-                    },
-                ],
-                payment_method_types=['card', ],
-                mode='subscription',
-                success_url=settings.SITE_URL + '?success=true',
-                cancel_url=settings.SITE_URL + '?canceled=true',
-            )
+        price = request.data.get('price', None)
+        token = request.headers.get('Authorization').split(' ')[1]
 
-            return Response({"redirect_url": checkout_session.url})
-        except stripe.error.StripeError as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        response_message, status_code = self.modify.modifying(token, price)
+
+        if not response_message:
+            try:
+                checkout_session = stripe.checkout.Session.create(
+                    line_items=[
+                        {
+                            'price': price,
+                            'quantity': 1,
+                        },
+                    ],
+                    payment_method_types=['card', ],
+                    mode='subscription',
+                    success_url=settings.SITE_URL + '?success=true',
+                    cancel_url=settings.SITE_URL + '?canceled=true',
+                )
+
+                response_message, status_code = {"redirect_url": checkout_session.url}, status.HTTP_201_CREATED
+            except stripe.error.StripeError as e:
+                response_message, status_code = {'error': str(e)}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+        return Response(response_message, status=status_code)
 
 
 # ____________________________________________________
@@ -84,7 +78,7 @@ class CreatePortalSessionView(APIView):
                 return_url=return_url,
             )
 
-            return Response({'redirect_url': portal_session.url})
+            return Response({"redirect_url": portal_session.url})
         except stripe.error.StripeError as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
@@ -94,10 +88,10 @@ class WebhookView(APIView):
         super().__init__()
         self.encrypt = Encrypt()
         self.post_to_premium = SetPremium()
-        self.user_email = ''
-        self.premium_type = ''
+        self.data_updating = PremiumModify()
         self.premium_data = {}
         self.response_handler = {}
+        self.response_status = None
 
     def post(self, request, *args, **kwargs):
 
@@ -119,23 +113,25 @@ class WebhookView(APIView):
             session = event['data']['object']['id']
             user_email = event['data']['object']['customer_details']['email']
             customer_id = event['data']['object']['customer']
+            subscription_id = event['data']['object']['subscription']
 
             print(f'🔔 Payment succeeded! For - {user_email} !')
 
             self.premium_data = {
                 'session_id': self.encrypt.encrypt(session),
-                'customer_id': customer_id
+                'customer_id': customer_id,
+                'subscription_id': subscription_id
             }
 
-            self.response_handler = self.post_to_premium.premium_post(user_email, self.premium_data)
-            print(self.response_handler)
-
-        elif event['type'] == 'customer.subscription.trial_will_end':
-            print('Subscription trial will end')
+            self.response_handler, self.response_status = self.post_to_premium.premium_post(user_email,
+                                                                                            self.premium_data)
+            print(self.response_handler, self.response_status)
 
         elif event['type'] == 'customer.subscription.created':
-            self.premium_type = event['data']['object']['plan']["metadata"]["subscription_name"]
+            premium_type = event['data']['object']['plan']["metadata"]["subscription_name"]
             customer_id = event['data']['object']['customer']
+            price_id = event['data']['object']['items']['data'][0]['plan']['id']
+
             print('🔔 Subscription created!')
 
             # +++++++++++++++++++++++++++++++++++++++++
@@ -143,15 +139,34 @@ class WebhookView(APIView):
             # (set Redis main cache). And set Redis decorator for caching request to DB. Set decorator to function that
             # make request to DB.
 
-            cache.set(customer_id, self.premium_type)
-            self.response_handler = {'request': True, 'status': 'successfully cached'}
-            print(self.response_handler)
+            self.premium_data = {
+                'premium_type': premium_type,
+                'price_id': price_id
+            }
+
+            cache.set(customer_id, self.premium_data)
+            self.response_handler, self.response_status = ({'status': 'success', 'response': 'successfully cached'},
+                                                           status.HTTP_200_OK)
+            print(self.response_handler, self.response_status)
 
             # +++++++++++++++++++++++++++++++++++++++++
 
         elif event['type'] == 'customer.subscription.updated':
-            print('Subscription updated %s' % event['id'])
-            self.response_handler = {'request': True, 'status': 'data successfully updated'}
+            if 'status' not in event['data']['previous_attributes']:
+
+                new_price_id = event['data']['object']['plan']['id']
+                new_premium_type = event['data']['object']['plan']['metadata']['subscription_name']
+                subscription_id = event['data']['object']['id']
+
+                self.response_handler, self.response_status = self.data_updating.data_changing(new_premium_type,
+                                                                                               new_price_id,
+                                                                                               subscription_id)
+            else:
+                print('Data updated %s' % event['id'])
+
+                self.response_handler, self.response_status = ({'status': 'success',
+                                                                'response': 'Data updated successfully!'},
+                                                               status.HTTP_200_OK)
 
         elif event['type'] == 'customer.subscription.deleted':
             print('Subscription canceled: %s' % event['id'])
@@ -161,6 +176,6 @@ class WebhookView(APIView):
             # receiving from the DB (check if the data is available. Realise without getting data from DB), delete it
             # from there. ---
 
-        return Response(self.response_handler)
+            # TEST MESSAGE
 
-    # status=self.response_handler.status_code
+        return Response(self.response_handler, status=self.response_status)

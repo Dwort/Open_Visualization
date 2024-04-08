@@ -7,6 +7,8 @@ class Premium(models.Model):
     premium_type = models.CharField(max_length=10)
     session_id = models.BinaryField()
     customer_id = models.CharField(max_length=20)
+    subscription_id = models.CharField(max_length=30)
+    price_id = models.CharField(max_length=30)
     buying_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

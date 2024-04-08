@@ -2,31 +2,44 @@ import React from 'react';
 import axios from "axios";
 import Header from "../Header";
 import "../main_page_dir_styles/premium_sub_style.css"
-import {get_token_export} from "../auth/user_page";
+import Cookies from "js-cookie";
 
 
 function PremiumSub() {
 
     const handleGetButton = (buyAPI) => {
-        const token = get_token_export();
+        const token = Cookies.get("access_token")
         if (token && buyAPI){
-             buySubmit(buyAPI);
+             buySubmit(buyAPI, token);
         }
         else {
              alert('YOU NEED A REGISTER OR LOG IN FOR BUYING PREMIUM STATUS!!!')
         }
     }
 
-    const buySubmit = async (selectedSub) => {
+    const buySubmit = async (selectedSub, token) => {
         try {
 
-          const response = await axios.post("http://127.0.0.1:8000/api/premium/buy/", {
-            'price': selectedSub
-          });
+            const response = await axios.post("http://127.0.0.1:8000/api/premium/buy/", {
+                'price': selectedSub
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-          const { redirect_url } = response.data;
+            const result = response.data
+
+            if (result.redirect_url) {
+                window.location.href = result.redirect_url
+
+            } else {
+                alert(result.message);
+            }
+
+          // const { redirect_url } = response.data;
           // window.location.href = redirect_url;
-            console.log(redirect_url)
+          // console.log(redirect_url)
 
         } catch (error) {
           console.error('Error submitting request:', error);

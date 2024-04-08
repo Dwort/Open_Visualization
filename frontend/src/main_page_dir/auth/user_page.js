@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import Cookies from 'js-cookie';
 import Header from "../Header";
 import Logout from "./logout";
 import "./auth_style/user_page_style.css"
@@ -9,22 +10,11 @@ import Spark from "../../front_additions/shining.png"
 import ErrorImg from "../../front_additions/404.gif"
 
 
-function get_token_export(){
-    const getCookie = (name) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
-    };
-    return getCookie("access_token")
-}
-
-export {get_token_export};
-
 const UserProfile = () => {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
-        const token = get_token_export();
+        const token = Cookies.get("access_token");
 
         if (token) {
             getUserData(token);

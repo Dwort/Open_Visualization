@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from premium.models import Premium
-from django.core.cache import cache
+from premium.utils import GetUserData
 from .utils import generate_access_token
 import jwt
 
@@ -20,10 +20,6 @@ class UserRegistrationAPIView(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
 
-    def get(self, request):
-        content = {'message': 'Hello'}
-        return Response(content)
-
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -32,7 +28,7 @@ class UserRegistrationAPIView(APIView):
                 access_token = generate_access_token(new_user)
                 data = {'access_token': access_token}
                 response = Response(data, status=status.HTTP_201_CREATED)
-                response.set_cookie(key='access_token', value=access_token, httponly=False)
+                response.set_cookie(key='access_token', value=access_token, httponly=True)
                 return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -45,8 +41,6 @@ class UserLoginAPIView(APIView):
     def post(self, request):
         email = request.data.get('email', None)
         user_password = request.data.get('password', None)
-
-        print(self.authentication_classes)
 
         if not user_password:
             raise AuthenticationFailed('The password is needed')
@@ -62,7 +56,7 @@ class UserLoginAPIView(APIView):
         if user_instance.is_active:
             user_access_token = generate_access_token(user_instance)
             response = Response()
-            response.set_cookie(key='access_token', value=user_access_token, httponly=False)
+            response.set_cookie(key='access_token', value=user_access_token, httponly=True)
             response.data = {
                 'access_token': user_access_token
             }
@@ -70,19 +64,17 @@ class UserLoginAPIView(APIView):
 
         return Response({
             'message': 'Something went wrong! Try again!'
-        })
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewAPI(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
+    user_jwt_data = GetUserData()
 
     def get(self, request):
-        user_token = request.headers.get('Authorization').split(' ')[1]
-        cookie_token = request.COOKIES.get("access_token")
-        print(user_token)
-        print('_____-')
-        print(cookie_token)
+        user_token = request.headers.get("Authorization").split(' ')[1]
+
         if not user_token:
             raise AuthenticationFailed('Unauthenticated user!')
 
@@ -93,40 +85,36 @@ class UserViewAPI(APIView):
         except Premium.DoesNotExist:
             premium = ''
 
-        user_model = get_user_model()
-        user = user_model.objects.filter(id=payload['id']).first()
+        user = self.user_jwt_data.user_data(user_token)
 
         user_serializer = UserRegistrationSerializer(user)
 
         response_data = {
-            'user_data': user_serializer.data,
-            'user_premium': premium
+            "user_data": user_serializer.data,
+            "user_premium": premium
         }
 
-        return Response(response_data)
+        return Response(response_data, status=status.HTTP_200_OK)
 
 
 class UserLogoutViewAPI(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
 
-    def post(self, request):
-        user_token = request.COOKIES.get('access_token', None)
-        print(user_token)
+    def get(self, request):
+        user_token = request.headers.get("Authorization").split(' ')[1]
+
         if user_token:
             response = Response()
-            response.delete_cookie('access_token')
+            response.delete_cookie("access_token")
             response.data = {
                 'message': 'Logged out successfully!'
             }
-            print('Loop')
+            response.status_code = status.HTTP_200_OK
+
             return response
-        response = Response()
-        response.data = {
-            'message': 'User is already logged out!'
-        }
-        print('NO loop')
-        return response
+
+        return Response({'message': 'User is already logged out or unauthorized!'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserDeleteViewAPI(APIView):
