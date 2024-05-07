@@ -4,7 +4,8 @@ from authorization.views import (
     UserLoginAPIView,
     UserViewAPI,
     UserLogoutViewAPI,
-    UserDeleteViewAPI
+    UserDeleteViewAPI,
+    EditUserData,
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path('user/', UserViewAPI.as_view()),
     path('user/logout/', UserLogoutViewAPI.as_view()),
     path('user/delete/', UserDeleteViewAPI.as_view()),
+    path('user/data-edit/', EditUserData.as_view()),
 ]

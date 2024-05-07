@@ -33,24 +33,24 @@
 }
 
 .custom-button:hover {
-  background-color: #DCDCDC; /* Light gray */
+  background-color: #DCDCDC;
 }
 
 /* Style for icon and buttons*/
 
 .icon {
   position: absolute;
-  top: -55px; /* відступ зверху */
-  left: 50%; /* центрування */
+  top: -55px;
+  left: 50%;
   transform: translateX(-50%);
-  width: 80px; /* ширина зображення */
-  height: auto; /* автоматична висота */
+  width: 80px;
+  height: auto;
 }
 
 .button-text {
   display: block;
-  margin-top: 5px; /* відступ між зображенням та текстом */
-  font-size: 16px; /* розмір тексту */
+  margin-top: 5px;
+  font-size: 16px;
   text-align: center;
   font-weight: bold;
 }
@@ -66,6 +66,22 @@
 .custom-button.graph {
   width: 250px;
   height: 90px;
+  background-color: #FFFFFF;
+  color: black;
+  border: 3px groove black;
+  border-radius: 15px;
+}
+
+.custom-button.graph:hover {
+  background-color: #DCDCDC;
+  color: black;
+  border: 3px groove black;
+}
+
+.custom-button.graph:disabled {
+  background-color: #DCDCDC;
+  color: black;
+  border: 3px groove black;
 }
 
 .buttons-group {
@@ -91,8 +107,8 @@
 }
 
 .text-v-context p {
-  color: black; /* Колір тексту - білий */
-  font-size: 15px; /* Розмір тексту */
+  color: black;
+  font-size: 15px;
   text-align: justify;
 }
 
@@ -131,11 +147,11 @@
 }
 
 .line {
-  height: 5px; /* Висота лінії */
-  margin-left: 60px; /* Відступ зліва */
-  margin-right: 60px; /* Відступ справа */
-  background-color: black; /* Сірий колір */
-  border-radius: 5px; /* Заокруглені краї */
+  height: 5px;
+  margin-left: 60px;
+  margin-right: 60px;
+  background-color: black;
+  border-radius: 5px;
 }
 
 .cooperation-context {

@@ -93,7 +93,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15,  # Таймаут кешування за замовчуванням (у секундах)
     'DEFAULT_CACHE_HEADERS': True,  # Включення кеш-заголовків у відповідях
-    'DEFAULT_CACHE_BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # Використовуйте кеш у пам'яті
+    'DEFAULT_CACHE_BACKEND': 'django_redis.cache.RedisCache',  # Використовуйте кеш у пам'яті
 }
 
 
@@ -132,13 +132,16 @@ DATABASES = {
     }
 }
 
-# Налаштування кешування
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # Використовуйте кеш у пам'яті
-        'LOCATION': 'unique-snowflake',  # Унікальний ідентифікатор
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

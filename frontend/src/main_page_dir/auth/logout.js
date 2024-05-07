@@ -6,8 +6,6 @@ import Cookies from "js-cookie";
 
 const Logout = () => {
     const handleLogout = async () => {
-
-        // document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         const token = Cookies.get("access_token")
 
         try {
@@ -18,7 +16,6 @@ const Logout = () => {
             });
 
             if(response.status === 200) {
-                // document.cookie = 'access_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                 Cookies.remove("access_token")
                 window.location.href = '/';
             } else {

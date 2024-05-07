@@ -1,10 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from premium.models import Premium
+from premium.models import Premium, Limits
 from rest_framework import status
+from redis.exceptions import RedisError
 from django.conf import settings
 from django.core.cache import cache
 from premium.utils import Encrypt, SetPremium, PremiumModify
+from django.contrib.auth import get_user_model
 import stripe
 import jwt
 
@@ -12,9 +14,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class CreateCheckoutSessionView(APIView):
-    def __init__(self, **kwargs):
-        super().__init__()
-        self.modify = PremiumModify()
+    modify = PremiumModify()
 
     def post(self, request):
 
@@ -47,14 +47,8 @@ class CreateCheckoutSessionView(APIView):
 
 # ____________________________________________________
 
-# Comment: For CreatePortalSessionView, the "session_id" must be sent via axios and must be obtained from site's cookies
-# like "access_token". CreatePortalSessionView won't redirect, it will use Response like previous class. And after users
-# clicks the button in burger menu it will redirect the user to user subscription menu stripe. Or something like that.
-
 class CreatePortalSessionView(APIView):
-    def __init__(self, **kwargs):
-        super().__init__()
-        self.decode = Encrypt()
+    decode = Encrypt()
 
     def post(self, request):
 
@@ -125,7 +119,6 @@ class WebhookView(APIView):
 
             self.response_handler, self.response_status = self.post_to_premium.premium_post(user_email,
                                                                                             self.premium_data)
-            print(self.response_handler, self.response_status)
 
         elif event['type'] == 'customer.subscription.created':
             premium_type = event['data']['object']['plan']["metadata"]["subscription_name"]
@@ -134,22 +127,20 @@ class WebhookView(APIView):
 
             print('🔔 Subscription created!')
 
-            # +++++++++++++++++++++++++++++++++++++++++
-            # Notice: add here try except block like in SetPremium but in except must be RedisError
-            # (set Redis main cache). And set Redis decorator for caching request to DB. Set decorator to function that
-            # make request to DB.
-
             self.premium_data = {
                 'premium_type': premium_type,
                 'price_id': price_id
             }
 
-            cache.set(customer_id, self.premium_data)
-            self.response_handler, self.response_status = ({'status': 'success', 'response': 'successfully cached'},
-                                                           status.HTTP_200_OK)
-            print(self.response_handler, self.response_status)
+            try:
 
-            # +++++++++++++++++++++++++++++++++++++++++
+                cache.set(customer_id, self.premium_data)
+                self.response_handler, self.response_status = ({'status': 'success', 'response': 'successfully cached'},
+                                                               status.HTTP_200_OK)
+
+            except RedisError as re:
+                self.response_handler, self.response_status = ({'status': 'error', 'response': str(re)},
+                                                               status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         elif event['type'] == 'customer.subscription.updated':
             if 'status' not in event['data']['previous_attributes']:
@@ -166,16 +157,109 @@ class WebhookView(APIView):
 
                 self.response_handler, self.response_status = ({'status': 'success',
                                                                 'response': 'Data updated successfully!'},
-                                                               status.HTTP_200_OK)
+                                                               status.HTTP_204_NO_CONTENT)
 
         elif event['type'] == 'customer.subscription.deleted':
+            customer_id = event['data']['object']['customer']
+
+            try:
+                premium = Premium.objects.get(customer_id=customer_id)
+                premium.delete()
+                self.response_handler, self.response_status = ({'status': 'success',
+                                                                'response': 'Subscription delete successfully!'},
+                                                               status.HTTP_204_NO_CONTENT)
+            except Premium.DoesNotExist:
+                self.response_handler, self.response_status = ({'status': 'error',
+                                                                'response': 'There is no subscription'},
+                                                               status.HTTP_404_NOT_FOUND)
+
             print('Subscription canceled: %s' % event['id'])
 
-            # --- Call the class from another "utils.py" file, where the functionality will be implemented: get premium
-            # data from the premium table of the DB by customer ID, which will go to the class from here, and after
-            # receiving from the DB (check if the data is available. Realise without getting data from DB), delete it
-            # from there. ---
-
-            # TEST MESSAGE
+        elif event['type'] == 'customer.deleted':
+            self.response_handler, self.response_status = ({'status': 'success',
+                                                            'response': 'Customer deleted successful'},
+                                                           status.HTTP_200_OK)
 
         return Response(self.response_handler, status=self.response_status)
+
+
+# Class with checking how many usages users made.
+# Class (APIView) get request from useEffect from React.
+# Here is must get an object from Limits (according to token) and check.
+# If a user doesn't have an object, return HTTP_200_OK. If a user has an object, check how much usage he has.
+# Get also premium_type from limit.premium_type and if count of usages not more, according to limit, return HTTP_200_OK.
+# The last one: if a user's 'usages' == limit, return status 429.
+
+# ________________________________________
+
+# Class of adding counts to usage user limit. If a user doesn't have an object in Limits table, then create it and
+# add their user data from user table and add one usage. If a user already has an object, add 1 to usage and
+# return HTTP_200_OK
+#   premium = Premium.objects.get(user_id=user_id['id'])
+
+class LimitChecking(APIView):
+    premium_type = ''
+    user_counts = 0
+    premium_models = {
+        'freemium': 10,
+        'Junior': 50,
+        'Middle': 100,
+    }
+
+    def get(self, request):
+        jwt_token = request.headers.get('Authorization').split(' ')[1]
+        user_id = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])['id']
+
+        try:
+            limit = Limits.objects.get(user_id=user_id)
+
+            self.premium_type = limit.premium_type
+            self.user_counts = limit.usages
+
+        except Limits.DoesNotExist:
+            return Response(status=status.HTTP_200_OK)
+
+        else:
+            response = Response()
+
+            if self.premium_type == 'Senior':
+                response.status_code = status.HTTP_200_OK
+                return response
+
+            models_count = self.premium_models.get(self.premium_type)
+
+            if self.user_counts < models_count:
+                response.status_code = status.HTTP_200_OK
+            else:
+                response.status_code = status.HTTP_429_TOO_MANY_REQUESTS
+
+            return response
+
+
+class LimitChanging(APIView):
+    def post(self, request):
+        jwt_token = request.headers.get('Authorization').split(' ')[1]
+        user_id = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])['id']
+        user_model = get_user_model()
+
+        user = user_model.objects.get(id=user_id)
+
+        try:
+            premium = Premium.objects.get(user_id=user_id)
+        except Premium.DoesNotExist:
+            premium = None
+
+        limit, created = Limits.objects.get_or_create(user=user, premium=premium)
+
+        print(f'Here is limit: {limit} and here is created {created} !!')
+
+        if created:
+            limit.usages += 1
+
+        limit.usages += 1
+        limit.save()
+
+        response = Response()
+        response.status_code = status.HTTP_200_OK
+
+        return response

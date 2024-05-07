@@ -15,6 +15,7 @@ import Registration from "./main_page_dir/auth/registration";
 import Login from "./main_page_dir/auth/login";
 import UserProfile from "./main_page_dir/auth/user_page";
 import TermsAndConditions from "./main_page_dir/burger_menu_files/terms_and_conditions";
+import EditUserData from "./main_page_dir/auth/edit_user_data";
 
 
 function App() {
@@ -27,12 +28,13 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route path="/user" element={<UserProfile />} />
-          <Route path="/user/terms/" element={<TermsAndConditions />} />
+          <Route path="/user/edit" element={<EditUserData />} />
+          <Route path="/user/terms" element={<TermsAndConditions />} />
 
         <Route path="/chart" element={<ChartPage />} />
           <Route path="/chart/population" element={<Populations />} />
           <Route path="/chart/area" element={<Area />} />
-          <Route path="/chart/history-gdp" element={<GdpByAlpha />} />
+          <Route path="/chart/gdp" element={<GdpByAlpha />} />
           {/*<Route path="/chart/gdp" element={<GdpAll />} />*/}
 
         <Route path="/map" element={<InteractiveMapPage />} />

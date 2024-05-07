@@ -3,6 +3,7 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import Header from "../Header";
 import Logout from "./logout";
+import {Link} from "react-router-dom";
 import "./auth_style/user_page_style.css"
 import OffCanvas from "../burger_menu_files/offcanvas";
 import Edit from "../../front_additions/edit.png"
@@ -20,6 +21,12 @@ const UserProfile = () => {
             getUserData(token);
         }
     }, []);
+
+    // , {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         }
 
     const getUserData = async (token) => {
         try {
@@ -83,7 +90,9 @@ const UserProfile = () => {
                             </div>
                     )}
                 </div>
-                <img src={Edit} alt="edit" className="edit-button"/>
+                <Link to="/user/edit" state={{userData}}>
+                    <img src={Edit} alt="edit" className="edit-button" title="Edit data"/>
+                </Link>
                 <div className="button-block">
                     <Logout />
                 </div>

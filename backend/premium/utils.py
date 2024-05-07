@@ -12,9 +12,9 @@ import time
 
 # ____________________________________________________
 
-# Comment: this class encrypts and decrypts data (mainly session_id) using AES cipher. All the necessary things for
+# Comment: this class encrypted and decrypts data (mainly session_id) using AES cipher. All the necessary things for
 # the cipher, such as the key and IV, you can get from the developer (Dwort). IV - are in the settings.py file. But
-# be careful! Do not make changes! If you need to use it, just use "settings.IV" in the code. The key to use AES can
+# be careful! Do not make changes! If you need to use it, use "settings.IV" in the code. The key to use AES can
 # also be obtained like this "settings.ENCRYPT_KEY". A key located in a variable environment, it is not stored in the
 # code like IV.
 
@@ -50,31 +50,22 @@ class Encrypt:
         return decrypt_key
 
 
-class GetUserData:
-    def __init__(self):
-        self.user_model = get_user_model()
-        self.key = settings.SECRET_KEY
-
-    def user_data(self, token):
-        jwt_data = jwt.decode(token, self.key, algorithms=['HS256'])
-        user_data = self.user_model.objects.filter(id=jwt_data['id']).first()
-
-        return user_data
-
-
 # ____________________________________________________
 
-# Comment: this class create in DB table row with premium current user.
+# Comment: this class creates in DB table row with premium current user.
 
 # ____________________________________________________
 class SetPremium:
-    def __init__(self):
-        self.user_model = get_user_model()
+    user = get_user_model()
 
     def premium_post(self, user_email, premium_data):
-        user = self.user_model.objects.get(email=user_email)
+        try:
+            user_data = self.user.objects.get(email=user_email)
+        except self.user.DoesNotExist:
+            return {'status': 'error', 'response': 'User does not exist! '}, status.HTTP_404_NOT_FOUND
+
         premium_data.update(cache.get(premium_data['customer_id']))
-        premium_data['user'] = user
+        premium_data['user'] = user_data
 
         cache.delete(premium_data['customer_id'])
 
@@ -87,11 +78,9 @@ class SetPremium:
 
 
 class PremiumModify:
-    def __init__(self):
-        self.decode_data = GetUserData()
-
     def modifying(self, token, price):
-        user_id = self.decode_data.user_data(token).id
+        jwt_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = get_user_model().objects.filter(id=jwt_data['id']).first()
 
         probation_date = int(time.time())
         try:

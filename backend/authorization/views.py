@@ -1,4 +1,4 @@
-from authorization.serializers import UserRegistrationSerializer, UserLoginSerializer
+from authorization.serializers import UserRegistrationSerializer, UserLoginSerializer, DataUserEditSerializer
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny
@@ -6,12 +6,15 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
-from django.core.exceptions import ObjectDoesNotExist
+from django.db import DatabaseError
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
+from backend.decorators import usage_counter
 from premium.models import Premium
-from premium.utils import GetUserData
 from .utils import generate_access_token
+from django.core.cache import cache
+import stripe
 import jwt
 
 
@@ -42,10 +45,10 @@ class UserLoginAPIView(APIView):
         email = request.data.get('email', None)
         user_password = request.data.get('password', None)
 
-        if not user_password:
+        if user_password is None:
             raise AuthenticationFailed('The password is needed')
 
-        if not email:
+        if email is None:
             raise AuthenticationFailed('The email is needed')
 
         user_instance = authenticate(username=email, password=user_password)
@@ -70,8 +73,8 @@ class UserLoginAPIView(APIView):
 class UserViewAPI(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
-    user_jwt_data = GetUserData()
 
+    @method_decorator(usage_counter)
     def get(self, request):
         user_token = request.headers.get("Authorization").split(' ')[1]
 
@@ -80,19 +83,26 @@ class UserViewAPI(APIView):
 
         payload = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
 
+        cached_user_data = cache.get(f"cached_user_data_{payload['id']}")
+
+        if cached_user_data:
+            return Response(cached_user_data, status=status.HTTP_200_OK)
+
         try:
             premium = Premium.objects.get(user_id=payload['id']).premium_type
         except Premium.DoesNotExist:
             premium = ''
 
-        user = self.user_jwt_data.user_data(user_token)
+        user_data = get_user_model().objects.filter(id=payload['id']).first()
 
-        user_serializer = UserRegistrationSerializer(user)
+        user_serializer = UserRegistrationSerializer(user_data)
 
         response_data = {
             "user_data": user_serializer.data,
             "user_premium": premium
         }
+
+        cache.set(f"cached_user_data_{payload['id']}", response_data, timeout=60)
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -118,26 +128,49 @@ class UserLogoutViewAPI(APIView):
 
 
 class UserDeleteViewAPI(APIView):
-
-    def get(self, request):
-        context = {"message": "function of user deleting"}
-        return Response(context)
+    user = get_user_model()
 
     def post(self, request):
-        data = request.data
-        user_id = data.get('id')
-
-        user_model = get_user_model()
+        user_token = request.headers.get("Authorization").split(' ')[1]
+        user_data = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
 
         try:
-            user = user_model.objects.get(id=user_id)
-        except ObjectDoesNotExist:
-            return Response({"error": f"USER with id - {user_id} not found!"}, status=status.HTTP_404_NOT_FOUND)
+            user = self.user.objects.get(id=user_data['id'])
 
-        deleted, _ = user.delete()
+            try:
+                premium = Premium.objects.get(user_id=user_data['id'])
+            except Premium.DoesNotExist:
+                premium = None
 
-        if deleted > 0:
-            return Response({"message": f"USER with id - {user_id} successfully deleted"}, status=status.
-                            HTTP_204_NO_CONTENT)
+            if premium:
+                stripe.Customer.delete(premium.customer_id)
+
+            user.delete()
+
+            response = Response()
+            response.status_code = status.HTTP_200_OK
+
+            return response
+
+        except self.user.DoesNotExist:
+            return Response({"error": "USER not found!"}, status=status.HTTP_404_NOT_FOUND)
+
+        except DatabaseError as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class EditUserData(APIView):
+    user = get_user_model()
+
+    def patch(self, request):
+        user_token = request.headers.get("Authorization").split(' ')[1]
+        user_data = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
+
+        user = self.user.objects.get(id=user_data['id'])
+
+        serializer = DataUserEditSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
         else:
-            return Response({"error": "FAILED to delete USER!"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

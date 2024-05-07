@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, LinearScale } from "chart.js/auto";
 import CountryInfoApp from "./page_functions/countries_checkbox";
-import logo from "../front_additions/logo_open_visualization.jpg"
 import './graph_styles/population-area_style.css'
+import Header from "../main_page_dir/Header";
 
 
 function Populations(){
@@ -101,9 +100,10 @@ function Populations(){
 
   return (
     <div className="main-container">
-      <div className="head-container">
-        <img src={logo} alt="Логотип компанії" className="logo" />
-      </div>
+      {/*<div className="head-container">*/}
+      {/*  <img src={logo} alt="Логотип компанії" className="logo" />*/}
+      {/*</div>*/}
+      <Header />
       <div className="body-container">
         <div className="select-container">
           <label>
@@ -125,7 +125,7 @@ function Populations(){
 
         <div className="checkbox-container">
           <div className="h2-container">
-            <h2>Список країн</h2>
+            <h2>Countries list</h2>
           </div>
           <div className="checkbox-content">
             <CountryInfoApp onCheckboxChange={setChartData} dataType={'population'} />

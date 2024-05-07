@@ -8,12 +8,12 @@ import Cookies from "js-cookie";
 function PremiumSub() {
 
     const handleGetButton = (buyAPI) => {
-        const token = Cookies.get("access_token")
+        const token = Cookies.get("access_token");
         if (token && buyAPI){
              buySubmit(buyAPI, token);
         }
         else {
-             alert('YOU NEED A REGISTER OR LOG IN FOR BUYING PREMIUM STATUS!!!')
+             alert('YOU NEED A REGISTER OR LOG IN FOR BUYING PREMIUM STATUS!!!');
         }
     }
 
@@ -28,18 +28,14 @@ function PremiumSub() {
                 },
             });
 
-            const result = response.data
+            const result = response.data;
 
             if (result.redirect_url) {
-                window.location.href = result.redirect_url
+                window.location.href = result.redirect_url;
 
             } else {
                 alert(result.message);
             }
-
-          // const { redirect_url } = response.data;
-          // window.location.href = redirect_url;
-          // console.log(redirect_url)
 
         } catch (error) {
           console.error('Error submitting request:', error);

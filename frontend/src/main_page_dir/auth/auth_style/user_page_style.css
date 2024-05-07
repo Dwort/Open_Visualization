@@ -104,37 +104,24 @@
 .sparkling-block {
     width: 30px;
     height: auto;
-    /*box-shadow: rgba(0, 0, 0, .4) 0 2px 4px 0;*/
 }
 
 /* END OF PREMIUM BLOCK STYLE*/
 
 .user-data-line {
-    height: 5px; /* Висота лінії */
+    height: 5px;
     width: 110%;
     margin-top: 10px;
-    margin-left: -30px; /* Відступ зліва */
-    /*margin-right: 60px; !* Відступ справа *!*/
-    /*justify-content: space-evenly;*/
-    background-color: #353536; /* Сірий колір */
-    border-radius: 3px; /* Заокруглені краї */
+    margin-left: -30px;
+    background-color: #353536;
+    border-radius: 3px;
 }
-
-/*.info-menu-block {*/
-/*    display: flex;*/
-/*    width: 100%;*/
-/*    justify-content: space-between;*/
-/*    margin-top: 70px;*/
-/*    box-shadow: rgba(0, 0, 0, .4) 0 2px 4px 0;*/
-/*}*/
 
 .button-block {
     width: 200px;
     position: absolute;
 	bottom: 20px;
 	right: 30px;
-
-    /*box-shadow: rgba(0, 0, 0, .9) 0 2px 4px 0;*/
 }
 
 .edit-button {
@@ -150,4 +137,72 @@
     height: auto;
 }
 
+/* Edit page styles */
 
+.back-button {
+    width: 30px;
+    height: auto;
+}
+
+.bottom-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 60px;
+    padding: 0 100px;
+}
+
+.password-button {
+    width: 70px;
+    height: auto;
+}
+
+.edit-data-block {
+    margin-left: 100px;
+    margin-top: 20px;
+}
+
+.edit-container {
+    width: 1000px;
+}
+
+.edit-changes {
+    margin-top: 30px !important;
+    margin-left: 10px !important;
+}
+
+.edit-form-container {
+    box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 40px 20px;
+    border: 3px solid #DEDEDE;
+    width: 800px;
+    /*margin-top: 10px;*/
+}
+
+.edit-form-container p {
+    margin-top: 30px;
+    margin-bottom: -20px;
+    font-size: 12px;
+}
+
+.input-grout-edit-text {
+    width: 100px;
+    display: flex;
+    justify-content: center;
+}
+
+.input-group-head-container {
+    margin-bottom: 20px;
+    height: 30px;
+}
+
+.edit-submit-button {
+    display: flex;
+    margin-top: 30px;
+    width: 200px;
+    font-size: 30px;
+    font-weight: bold;
+    height: auto;
+}
+
+/* End edit page styles */

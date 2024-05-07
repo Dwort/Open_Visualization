@@ -13,3 +13,21 @@ class Premium(models.Model):
 
     def __str__(self):
         return self.user.email
+
+
+class Limits(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    premium = models.OneToOneField(Premium, on_delete=models.CASCADE, null=True, blank=True)
+    usages = models.IntegerField(default=0)
+    first_action = models.DateTimeField(auto_now_add=True)
+    last_action = models.DateTimeField(auto_now=True)
+
+    def __repr__(self):
+        return self.user.email
+
+    @property
+    def premium_type(self):
+        if self.premium:
+            return self.premium.premium_type
+        else:
+            return 'freemium'
