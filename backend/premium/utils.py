@@ -3,7 +3,7 @@ from Crypto.Cipher import AES
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import DatabaseError
-from premium.models import Premium
+from premium.models import Premium, Limits
 from rest_framework import status
 from django.core.cache import cache
 import jwt
@@ -72,9 +72,23 @@ class SetPremium:
         try:
             Premium.objects.create(**premium_data)
 
+            self.limit_premium_update(user_data)
+
             return {'status': 'success', 'response': 'successfully created'}, status.HTTP_201_CREATED
         except DatabaseError:
             return {'status': 'error', 'response': 'creation error'}, status.HTTP_500_INTERNAL_SERVER_ERROR
+
+    def limit_premium_update(self, user_obj: object):
+        premium = Premium.objects.get(user_id=user_obj.id)
+
+        try:
+            limit = Limits.objects.get(user_id=user_obj.id)
+
+            limit.premium = premium
+            limit.save()
+
+        except Limits.DoesNotExist:
+            pass
 
 
 class PremiumModify:

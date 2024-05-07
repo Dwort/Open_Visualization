@@ -27,8 +27,11 @@ function ChartPage() {
                 Authorization: `Bearer ${token}`,
             }
         }).catch(error => {
-            setButtonDisabled(true)
-            // console.error('Error with limit checking: ', error);
+            if (error.response.status === 429) {
+                setButtonDisabled(true);
+            } else {
+                console.error('Error with limit checking: ', error);
+            }
         });
     });
 

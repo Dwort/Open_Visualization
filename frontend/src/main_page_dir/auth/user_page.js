@@ -79,6 +79,7 @@ const UserProfile = () => {
                                 <p>User ID: {userData['user_data'].id && <span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].id}</span>}</p>
                                 <p>Email: {userData['user_data'].email && <span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].email}</span>}</p>
                                 <p>Date of joined: {userData['user_data'].data_joined && <span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].data_joined}</span>}</p>
+                                <p>Functional limit: {userData['user_limit'] && <span className="user-information-block">&nbsp;&nbsp;{userData['user_limit']}</span>}</p>
                             </div>
                         </div>
                         ) : (

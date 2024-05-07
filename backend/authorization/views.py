@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from backend.decorators import usage_counter
-from premium.models import Premium
+from premium.models import Premium, Limits
 from .utils import generate_access_token
 from django.core.cache import cache
 import stripe
@@ -74,6 +74,11 @@ class UserViewAPI(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
 
+    def __init__(self, **kwargs):
+        super().__init__()
+        self.premium = ''
+        self.limit = 0
+
     @method_decorator(usage_counter)
     def get(self, request):
         user_token = request.headers.get("Authorization").split(' ')[1]
@@ -89,9 +94,14 @@ class UserViewAPI(APIView):
             return Response(cached_user_data, status=status.HTTP_200_OK)
 
         try:
-            premium = Premium.objects.get(user_id=payload['id']).premium_type
+            self.premium = Premium.objects.get(user_id=payload['id']).premium_type
         except Premium.DoesNotExist:
-            premium = ''
+            self.premium = ''
+
+        try:
+            self.limit = Limits.objects.get(user_id=payload['id']).usages
+        except Limits.DoesNotExist:
+            self.limit = 0
 
         user_data = get_user_model().objects.filter(id=payload['id']).first()
 
@@ -99,7 +109,8 @@ class UserViewAPI(APIView):
 
         response_data = {
             "user_data": user_serializer.data,
-            "user_premium": premium
+            "user_premium": self.premium,
+            "user_limit": self.limit,
         }
 
         cache.set(f"cached_user_data_{payload['id']}", response_data, timeout=60)

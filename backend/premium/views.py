@@ -237,12 +237,13 @@ class LimitChecking(APIView):
 
 
 class LimitChanging(APIView):
+    user_model = get_user_model()
+
     def post(self, request):
         jwt_token = request.headers.get('Authorization').split(' ')[1]
         user_id = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])['id']
-        user_model = get_user_model()
 
-        user = user_model.objects.get(id=user_id)
+        user = self.user_model.objects.get(id=user_id)
 
         try:
             premium = Premium.objects.get(user_id=user_id)
@@ -251,15 +252,19 @@ class LimitChanging(APIView):
 
         limit, created = Limits.objects.get_or_create(user=user, premium=premium)
 
-        print(f'Here is limit: {limit} and here is created {created} !!')
-
-        if created:
-            limit.usages += 1
-
-        limit.usages += 1
-        limit.save()
-
         response = Response()
-        response.status_code = status.HTTP_200_OK
+
+        try:
+            if created:
+                limit.usages += 1
+
+            limit.usages += 1
+            limit.save()
+
+            response.status_code = status.HTTP_200_OK
+
+        except Exception as e:
+            response.data = str(e)
+            response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
 
         return response
