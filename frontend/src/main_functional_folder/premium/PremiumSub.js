@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios";
-import Header from "../Header";
+import Header from "../AdditionalFunctionality/Header";
 import "../main_page_dir_styles/premium_sub_style.css"
 import Cookies from "js-cookie";
 

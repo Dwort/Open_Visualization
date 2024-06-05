@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, LinearScale } from "chart.js/auto";
+// import { Chart as ChartJS, LinearScale } from "chart.js/auto";
 import GdpByAlphaCode from "./page_functions/gdp_by_alpha_box";
 import './graph_styles/population-area_style.css'
-import Header from "../main_page_dir/Header";
+import Header from "../main_functional_folder/AdditionalFunctionality/Header";
 
 
 function GdpByAlpha(){

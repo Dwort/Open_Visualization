@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'premium',
+    'user_filehub',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -96,7 +98,6 @@ REST_FRAMEWORK = {
     'DEFAULT_CACHE_BACKEND': 'django_redis.cache.RedisCache',  # Використовуйте кеш у пам'яті
 }
 
-
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -141,7 +142,6 @@ CACHES = {
         }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -199,3 +199,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+# Amazon S3 default settings:
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = 'open-visualization-s3-storage'
+AWS_S3_SIGNATURE_NAME = 's3v4',
+AWS_S3_REGION_NAME = 'us-east-2'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = None
+AWS_S3_VERITY = True
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

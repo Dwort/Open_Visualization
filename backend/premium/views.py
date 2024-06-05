@@ -183,19 +183,22 @@ class WebhookView(APIView):
         return Response(self.response_handler, status=self.response_status)
 
 
-# Class with checking how many usages users made.
-# Class (APIView) get request from useEffect from React.
-# Here is must get an object from Limits (according to token) and check.
-# If a user doesn't have an object, return HTTP_200_OK. If a user has an object, check how much usage he has.
-# Get also premium_type from limit.premium_type and if count of usages not more, according to limit, return HTTP_200_OK.
-# The last one: if a user's 'usages' == limit, return status 429.
+'''
+Class with checking how many usages users made.
+Class (APIView) get request from useEffect from React.
+Here is must get an object from Limits (according to token) and check.
+If a user doesn't have an object, return HTTP_200_OK. If a user has an object, check how much usage he has.
+Get also premium_type from limit.premium_type and if count of usages not more, according to limit, return HTTP_200_OK.
+The last one: if a user's 'usages' == limit, return status 429.
 
-# ________________________________________
+________________________________________
 
-# Class of adding counts to usage user limit. If a user doesn't have an object in Limits table, then create it and
-# add their user data from user table and add one usage. If a user already has an object, add 1 to usage and
-# return HTTP_200_OK
-#   premium = Premium.objects.get(user_id=user_id['id'])
+Class of adding counts to usage user limit. If a user doesn't have an object in Limits table, then create it and
+add their user data from user table and add one usage. If a user already has an object, add 1 to usage and
+return HTTP_200_OK
+  premium = Premium.objects.get(user_id=user_id['id'])
+'''
+
 
 class LimitChecking(APIView):
     premium_type = ''

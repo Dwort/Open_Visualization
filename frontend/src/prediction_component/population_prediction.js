@@ -22,7 +22,7 @@ const PopulationPrediction = () => {
   if(selectedCountry !== null) {
     getPopulationPrediction(selectedCountry, year); // Оновлення при зміні року
   }
-}, [year]);
+}, [selectedCountry, year]);
 
   useEffect(() => {
     axios.get("http://127.0.0.1:8000/api/countries/")

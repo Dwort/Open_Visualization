@@ -79,7 +79,7 @@ class UserViewAPI(APIView):
         self.premium = ''
         self.limit = 0
 
-    @method_decorator(usage_counter)
+    # @method_decorator(usage_counter)
     def get(self, request):
         user_token = request.headers.get("Authorization").split(' ')[1]
 

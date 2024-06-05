@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import './main_page_dir_styles/Header.css'
-import UserLogo from '../front_additions/user.png'
+import '../main_page_dir_styles/Header.css'
+import UserLogo from '../../front_additions/user.png'
 import {Link} from "react-router-dom";
-import Logo from "../front_additions/Logo.jpg"
+import Logo from "../../front_additions/Logo.jpg"
 
 const Header = () => {
 
@@ -40,8 +40,8 @@ const Header = () => {
                 <Link to="/" className="logo-container">
                     <img src={Logo} alt="logo" className="head-logo"/>
                 </Link>
-                <a href="#scrollToFunction">Visualization</a>
-                <a href="#scrollToAbout">About</a>
+                <a href="/#scrollToFunction">Visualization</a>
+                <a href="/#scrollToAbout">About</a>
                 <a href="https://google.com/">More</a>
             </div>
             <div className="sigh-action">

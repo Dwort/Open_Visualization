@@ -1,9 +1,9 @@
 import React from "react";
-import Header from "../Header";
+import Header from "../AdditionalFunctionality/Header";
 import './burger_menu_styles/terms_and_conditions_css.css'
-import OffCanvas from "./offcanvas";
+import OffCanvas from "./Offcanvas";
 
-export default function Terms_and_conditions () {
+export default function TermsAndConditions () {
     return (
         <div className="terms-main-container">
             <Header />

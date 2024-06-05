@@ -28,4 +28,5 @@ urlpatterns = [
     path('predict/population/', PopulationPredictionView.as_view()),
     path('api/', include('authorization.urls')),
     path('api/', include('premium.urls')),
+    path('api/', include('user_filehub.urls')),
 ]

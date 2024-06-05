@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import CountryInfoApp from "./page_functions/countries_checkbox";
 import './graph_styles/population-area_style.css'
-import Header from "../main_page_dir/Header";
+import Header from "../main_functional_folder/AdditionalFunctionality/Header";
 
 
 function Populations(){

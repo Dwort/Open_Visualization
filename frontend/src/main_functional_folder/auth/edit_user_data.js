@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Cookies from 'js-cookie';
-import Header from "../Header";
+import Header from "../AdditionalFunctionality/Header";
 import "./auth_style/user_page_style.css"
 import Back from "../../front_additions/arrow-left.png"
 import Button from "react-bootstrap/Button";

@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import Cookies from 'js-cookie';
-import Header from "../Header";
+import Header from "../AdditionalFunctionality/Header";
 import Logout from "./logout";
 import {Link} from "react-router-dom";
 import "./auth_style/user_page_style.css"
-import OffCanvas from "../burger_menu_files/offcanvas";
+import OffCanvas from "../burger_menu_files/Offcanvas";
 import Edit from "../../front_additions/edit.png"
 import Spark from "../../front_additions/shining.png"
 import ErrorImg from "../../front_additions/404.gif"
@@ -14,19 +14,23 @@ import ErrorImg from "../../front_additions/404.gif"
 const UserProfile = () => {
     const [userData, setUserData] = useState(null);
 
+    const limits = {
+        '': 10,
+        'Junior': 50,
+        'Middle': 100,
+        'Senior': 'unlimited',
+    };
+
     useEffect(() => {
         const token = Cookies.get("access_token");
 
         if (token) {
-            getUserData(token);
+            getUserData(token).catch((error) => {
+                alert("Wait a minute and try again or connect with Tech support!");
+                console.error('Error with getting user data -> ', error);
+            });
         }
     }, []);
-
-    // , {
-    //             headers: {
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         }
 
     const getUserData = async (token) => {
         try {
@@ -39,7 +43,7 @@ const UserProfile = () => {
 
             setUserData(response.data);
         } catch (error) {
-            console.error("Error fetching user data:", error);
+            console.error("Error fetching user data -> ", error);
         }
     };
 
@@ -52,6 +56,14 @@ const UserProfile = () => {
             return 'premium-block-green';
         } else {
             return 'premium-block-transparent';
+        }
+    };
+
+    const premium_limit = (premium_type) => {
+        if (limits.hasOwnProperty(premium_type)){
+            return limits[premium_type];
+        } else {
+            return "Non type!";
         }
     };
 
@@ -76,10 +88,10 @@ const UserProfile = () => {
                             </div>
                             <div className="user-data-line"></div>
                             <div className="available-data-body">
-                                <p>User ID: {userData['user_data'].id && <span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].id}</span>}</p>
-                                <p>Email: {userData['user_data'].email && <span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].email}</span>}</p>
-                                <p>Date of joined: {userData['user_data'].data_joined && <span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].data_joined}</span>}</p>
-                                <p>Functional limit: {userData['user_limit'] && <span className="user-information-block">&nbsp;&nbsp;{userData['user_limit']}</span>}</p>
+                                <p>User ID: {<span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].id}</span>}</p>
+                                <p>Email: {<span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].email}</span>}</p>
+                                <p>Date of joined: {<span className="user-information-block">&nbsp;&nbsp;{userData['user_data'].data_joined}</span>}</p>
+                                <p>Functional limit: {<span className="user-information-block">&nbsp;&nbsp;{userData['user_limit']}</span>}&nbsp;&nbsp;/&nbsp;&nbsp;{<span className="user-information-block">{premium_limit(userData['user_premium'])}</span>}</p>
                             </div>
                         </div>
                         ) : (

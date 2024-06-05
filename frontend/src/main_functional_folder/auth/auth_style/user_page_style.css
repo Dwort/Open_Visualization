@@ -1,8 +1,16 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #dadada; /* Задаємо фон всій сторінці */
+}
+
 .user-page-main {
     background-color: #dadada;
     display: flex;
     justify-content: center;
     min-height: 100vh;
+    width: 100%;
 }
 
 .user-data-container {
@@ -206,3 +214,8 @@
 }
 
 /* End edit page styles */
+
+
+
+/* Start projects page styles*/
+

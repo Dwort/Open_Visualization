@@ -6,21 +6,21 @@ import statistic_icon from "../src/front_additions/buttons_icon/statistic.png"
 import predict_icon from "../src/front_additions/buttons_icon/demand.png"
 import video_about from "../src/front_additions/about.mp4"
 import partners from "../src/front_additions/partners.png"
-import Header from "./main_page_dir/Header";
+import Header from "./main_functional_folder/AdditionalFunctionality/Header";
+import Cookies from "js-cookie";
 
 function HomePage() {
 
-  function Chart() {
-  window.location.href = '/chart';
-  }
-  function Map() {
-  window.location.href = '/map';
-  }
-  function Statistics() {
-  window.location.href = '/statistics';
-  }
-  function Prediction() {
-  window.location.href = '/prediction';
+  const toFunctionHandle = (direction) => {
+
+    const token = Cookies.get("access_token");
+
+    if (token) {
+      window.location.href = `/${direction}`;
+    } else {
+      alert('You need to register or login to use this!');
+    }
+
   }
 
   return (
@@ -32,9 +32,9 @@ function HomePage() {
           <div className="button-wrapper">
             <button
               className="custom-button"
-              onClick={Chart}
+              onClick={() => toFunctionHandle('chart')}
               >
-              <img src={graph_icon} alt="button_icon" className="icon icon1"/>
+              <img src={graph_icon} alt="button_icon" className="icon"/>
               <span className="button-text">Graph</span>
             </button>
           </div>
@@ -42,7 +42,7 @@ function HomePage() {
           <div className="button-wrapper">
             <button
               className="custom-button"
-              onClick={Map}
+              onClick={() => toFunctionHandle('map')}
               >
               <img src={map_icon} alt="button_icon" className="icon icon2"/>
               <span className="button-text">Map</span>
@@ -52,7 +52,7 @@ function HomePage() {
           <div className="button-wrapper">
             <button
               className="custom-button"
-              onClick={Statistics}
+              onClick={() => toFunctionHandle('statistics')}
               >
               <img src={statistic_icon} alt="button_icon" className="icon icon3"/>
               <span className="button-text">Statistics</span>
@@ -61,7 +61,7 @@ function HomePage() {
           <div className="button-wrapper">
             <button
               className="custom-button"
-              onClick={Prediction}
+              onClick={() => toFunctionHandle('prediction')}
               >
               <img src={predict_icon} alt="button_icon" className="icon icon4"/>
               <span className="button-text">Data Prediction</span>
@@ -72,7 +72,7 @@ function HomePage() {
         <div className="about-container" id="scrollToAbout">
           <div className="text-video-container">
             <div className="text-v-context">
-              <p>&nbsp;&nbsp;Open Visualization - visualization of demographic data with analysis, graphs and forecasting.
+              <p>&nbsp;&nbsp;<span style={{fontWeight: "bold"}}>Open Visualization</span> - visualization of demographic data with analysis, graphs and forecasting.
                 It is interactivity, comprehensibility and accessibility for everyone.<br/><br/>&nbsp;&nbsp;
                 We unlock the secrets of numbers and create an opportunity to imagine the future.<br/><br/>&nbsp;&nbsp;
                 Welcome to a world where data is stories!

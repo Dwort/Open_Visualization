@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, LinearScale } from "chart.js/auto";
+// import { Chart as ChartJS, LinearScale } from "chart.js/auto";
 import CountryInfoApp from "./page_functions/countries_checkbox";
 import './graph_styles/population-area_style.css'
 import logo from "../front_additions/logo_open_visualization.jpg";
