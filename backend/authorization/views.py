@@ -9,8 +9,6 @@ from django.contrib.auth import authenticate
 from django.db import DatabaseError
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.utils.decorators import method_decorator
-from backend.decorators import usage_counter
 from premium.models import Premium, Limits
 from .utils import generate_access_token
 from django.core.cache import cache
