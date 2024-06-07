@@ -45,7 +45,7 @@ const LimitProcessing = () => {
          // Change path and path name to correct in axios.get request.
 
         try {
-            const response = await axios.get('http://127.0.0.1:8000/api/UserProject/get-count-user-project/', {
+            const response = await axios.get('http://127.0.0.1:8000/api/files/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 }

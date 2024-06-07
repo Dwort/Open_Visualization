@@ -54,7 +54,16 @@ function AddUserFile(props) {
             alert(`Congratulation! File ${fileName ? fileName : selectedFile.name} was successfully added! \n
                    If you can't see it, just reload page.`);
         }).catch(error => {
-            alert(`Error with file uploading: ${error.status} \nTry again or connect with Tech support!`);
+            if (error.response) {
+            // Сервер відповів зі статусом, який виходить за межі діапазону 2xx
+                alert(`Error with file uploading: ${error.response.status}\n${JSON.stringify(error.response.data)}\nTry again or connect with Tech support!`);
+            } else if (error.request) {
+                // Запит був зроблений, але відповідь не отримана
+                alert('No response received from server. Please try again or contact Tech support.');
+            } else {
+                // Щось сталось при налаштуванні запиту, що викликало помилку
+                alert(`Error with file uploading: ${error.message}\nTry again or connect with Tech support!`);
+            }
         });
     };
 

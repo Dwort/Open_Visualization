@@ -7,8 +7,8 @@ from django.conf import settings
 from django.core.cache import cache
 from premium.utils import Encrypt, SetPremium, PremiumModify
 from django.contrib.auth import get_user_model
+from backend.utils import token_decode
 import stripe
-import jwt
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -51,9 +51,7 @@ class CreatePortalSessionView(APIView):
     decode = Encrypt()
 
     def post(self, request):
-
-        jwt_token = request.headers.get('Authorization').split(' ')[1]
-        user_id = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = token_decode(request=request)
 
         try:
             premium = Premium.objects.get(user_id=user_id['id'])
@@ -210,8 +208,7 @@ class LimitChecking(APIView):
     }
 
     def get(self, request):
-        jwt_token = request.headers.get('Authorization').split(' ')[1]
-        user_id = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])['id']
+        user_id = token_decode(request=request)
 
         try:
             limit = Limits.objects.get(user_id=user_id)
@@ -243,8 +240,7 @@ class LimitChanging(APIView):
     user_model = get_user_model()
 
     def post(self, request):
-        jwt_token = request.headers.get('Authorization').split(' ')[1]
-        user_id = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])['id']
+        user_id = token_decode(request=request)
 
         user = self.user_model.objects.get(id=user_id)
 

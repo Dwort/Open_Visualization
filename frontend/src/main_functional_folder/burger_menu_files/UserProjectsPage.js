@@ -1,6 +1,4 @@
 import React, {useEffect, useState} from "react";
-// import axios from "axios";
-// import Cookies from "js-cookie";
 import Header from "../AdditionalFunctionality/Header";
 import "../auth/auth_style/user_page_style.css";
 import "./burger_menu_styles/UserProjects_CSS.css";
@@ -13,7 +11,7 @@ import AddUserFile from '../AdditionalFunctionality/AddUserFile';
 
 function UserProjectsPage() {
     const [userProjects, setUserProjects] = useState([]);
-    const [updatePageFlag, setUpdatePageFlag] = useState(true);
+    // const [updatePageFlag, setUpdatePageFlag] = useState(true);
 
     const { GetUserProjects } = LimitProcessing();
 
@@ -25,10 +23,11 @@ function UserProjectsPage() {
 
     useEffect(() => {
         const projectCheck = async () => {
+            const projects = await GetUserProjects();
             try {
-                const projects = await GetUserProjects();
+                console.log(projects);
                 setUserProjects(projects);
-                setUpdatePageFlag(false);
+                // setUpdatePageFlag(false);
             } catch (error) {
                 alert(`Error -> ${error}`);
             }
@@ -38,7 +37,7 @@ function UserProjectsPage() {
             console.error(`Error during execution -> ${error}`);
         });
 
-    }, [updatePageFlag]);
+    }, []);
 
 
 
@@ -56,6 +55,16 @@ function UserProjectsPage() {
                         <div className="blocks">
                             <p>Some Text</p>
                             <p>Other text</p>
+                            <p>Files data: </p>
+                            {userProjects.map((project, index) => (
+                                <div key={index}>
+                                    <p>File Name: {project.file_name}</p>
+                                    <p>File Type: {project.file_type}</p>
+                                    <p>S3 File Link: {project.s3_file_link}</p>
+                                    <p>File Functions: {project.file_functions.join(', ')}</p>
+                                    <p>Uploading Date: {project.uploading_date}</p>
+                                </div>
+                            ))}
                         </div>
                     ) : (
                         <>

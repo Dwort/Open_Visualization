@@ -7,13 +7,12 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import authenticate
 from django.db import DatabaseError
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from premium.models import Premium, Limits
 from .utils import generate_access_token
 from django.core.cache import cache
 import stripe
-import jwt
+from backend.utils import token_decode
 
 
 class UserRegistrationAPIView(APIView):
@@ -79,12 +78,14 @@ class UserViewAPI(APIView):
 
     # @method_decorator(usage_counter)
     def get(self, request):
-        user_token = request.headers.get("Authorization").split(' ')[1]
+        # user_token = request.headers.get("Authorization").split(' ')[1]
+        #
+        # if not user_token:
+        #     raise AuthenticationFailed('Unauthenticated user!')
+        #
+        # payload = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
 
-        if not user_token:
-            raise AuthenticationFailed('Unauthenticated user!')
-
-        payload = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
+        payload = token_decode(request=request)
 
         cached_user_data = cache.get(f"cached_user_data_{payload['id']}")
 
@@ -140,8 +141,7 @@ class UserDeleteViewAPI(APIView):
     user = get_user_model()
 
     def post(self, request):
-        user_token = request.headers.get("Authorization").split(' ')[1]
-        user_data = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_data = token_decode(request=request)
 
         try:
             user = self.user.objects.get(id=user_data['id'])
@@ -172,8 +172,7 @@ class EditUserData(APIView):
     user = get_user_model()
 
     def patch(self, request):
-        user_token = request.headers.get("Authorization").split(' ')[1]
-        user_data = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_data = token_decode(request=request)
 
         user = self.user.objects.get(id=user_data['id'])
 

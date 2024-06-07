@@ -1,3 +1,4 @@
+import jwt
 import stripe
 from Crypto.Cipher import AES
 from django.conf import settings
@@ -6,7 +7,6 @@ from django.db import DatabaseError
 from premium.models import Premium, Limits
 from rest_framework import status
 from django.core.cache import cache
-import jwt
 import time
 
 
