@@ -41,9 +41,36 @@
 }
 
 .blocks {
-    display: flex;
-    align-items: flex-start;
+    margin: 20px 40px;
+    width: 1120px;
+    /*border: 1px solid black;*/
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
 }
+
+/* Style for button of adding new files */
+
+.files-button-block {
+    border: none;
+    background-color: white;
+    margin-left: -5px;
+}
+
+.add-new-file-block {
+    height: 300px;
+    width: 250px;
+    border: 1px solid rgb(128, 128, 128);
+    border-radius: 10px;
+    background-color: #f0f4f9;
+    box-shadow: rgba(0, 0, 0, .4) 0 2px 4px 0;
+}
+
+.add-new-file-img {
+    width: 150px;
+    height: auto;
+}
+
 
 /* Style for center and start position div according to data availability */
 
@@ -181,4 +208,17 @@
 
 .prediction-checkbox .form-check-label {
     color: red;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
 }

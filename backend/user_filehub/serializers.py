@@ -6,3 +6,9 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFileData
         fields = ['user', 'file_name', 'file_type', 's3_file_link', 'file_functions', 'uploading_date']
+
+
+class FileGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserFileData
+        fields = ['file_name', 'file_type', 's3_file_link', 'file_functions', 'uploading_date']

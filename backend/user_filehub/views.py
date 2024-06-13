@@ -5,7 +5,7 @@ from storages.backends.s3boto3 import S3Boto3Storage
 from botocore.exceptions import ClientError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
-from .serializers import FileSerializer
+from .serializers import FileSerializer, FileGroupSerializer
 from backend.utils import token_decode
 import json
 
@@ -63,7 +63,7 @@ class AddUserFile(APIView):
 
 
 class UserFiles(APIView):
-    serializer_class = FileSerializer
+    serializer_class = FileGroupSerializer
     user = get_user_model()
 
     def get(self, request):
@@ -88,4 +88,6 @@ class UserFiles(APIView):
                 'uploading_date': file.uploading_date
             })
 
-        return Response(files_group, status=status.HTTP_200_OK)
+        serializer = self.serializer_class(files_group, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

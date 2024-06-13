@@ -6,6 +6,7 @@ import "../burger_menu_files/burger_menu_styles/UserProjects_CSS.css";
 import {InputGroup} from "react-bootstrap";
 import Cookies from "js-cookie";
 import axios from "axios";
+import Spinner from 'react-bootstrap/Spinner';
 
 
 function AddUserFile(props) {
@@ -13,6 +14,7 @@ function AddUserFile(props) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState("");
     const [fileFunctions, setFileFunctions] =useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const functions = [
         () => <FileChoosing selectedFile={selectedFile} setSelectedFile={setSelectedFile} />,
@@ -42,6 +44,8 @@ function AddUserFile(props) {
         formData.append("file", selectedFile, fileName ? (fileName + '.' + extension) : selectedFile.name);
         formData.append("fileType", selectedFile.type);
         formData.append("fileFunctions", JSON.stringify(fileFunctions));
+
+        setIsLoading(true);
 
         await axios.post('http://127.0.0.1:8000/api/files/add/', formData, {
                 headers: {
@@ -108,9 +112,20 @@ function AddUserFile(props) {
                     </Button>
                 )}
             </Modal.Footer>
+            <LoadingOverlay isLoading={isLoading} />
         </Modal>
     );
 }
+
+const LoadingOverlay = ({ isLoading }) => {
+    return isLoading ? (
+        <div className="loading-overlay">
+            <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </Spinner>
+        </div>
+    ) : null;
+};
 
 const RecommendationFileModel = ({show, handleClose}) => {
     return (
@@ -151,6 +166,10 @@ const FileChoosing = ({selectedFile, setSelectedFile}) => {
 
         if (!allowedExtensions.exec(file.name)) {
             alert("Invalid file type. Choose correct file!\nYou can an upload only file with .pdf, .xls, .xlsx and .txt types!");
+            setFileTypeStatus('invalid-file-type');
+        } else if (file.name.length > 200 ) {
+            alert("Your file name is too long.\nPlease rename it and make shorter! Max length 245 symbols.\n" +
+                "File name including also file type!");
             setFileTypeStatus('invalid-file-type');
         } else {
             setSelectedFile(file);
@@ -202,17 +221,24 @@ const FileNameChange = ({ selectedFile, setFileName }) => {
     };
 
     const handleFileNameInput = (event) => {
-        setNewFileName(event.target.value);
+        const newName = event.target.value;
+
+        if (newName.length > 200) {
+            alert('Your new file name is too long!\nMax length of file name must be no more than 195 symbols!');
+            return; // Виходимо з функції, якщо назва перевищує максимальну довжину
+        }
+
+        setNewFileName(newName);
     };
 
-    // Оновлюємо батьківський компонент лише якщо чекбокс увімкнено
     useEffect(() => {
         if (changeName) {
             setFileName(newFileName);
         } else {
-            setFileName(""); // Очищаємо значення у батьківському компоненті, якщо чекбокс вимкнено
+            setFileName(''); // Clear the fileName in the parent component if the checkbox is unchecked
         }
     }, [newFileName, changeName, setFileName]);
+
 
     return (
         <Form.Group controlId="formFile" className="add-file-form mb-3">

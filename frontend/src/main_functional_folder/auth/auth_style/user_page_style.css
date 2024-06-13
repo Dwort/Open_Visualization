@@ -2,7 +2,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background-color: #dadada; /* Задаємо фон всій сторінці */
+    background-color: #dadada;
 }
 
 .user-page-main {
@@ -23,6 +23,7 @@ html, body {
     box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
     border: 1px solid #ccc;
     border-radius: 25px;
+    overflow: auto;
 }
 
 .user-data {
