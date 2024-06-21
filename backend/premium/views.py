@@ -211,7 +211,7 @@ class LimitChecking(APIView):
         user_id = token_decode(request=request)
 
         try:
-            limit = Limits.objects.get(user_id=user_id)
+            limit = Limits.objects.get(user_id=user_id['id'])
 
             self.premium_type = limit.premium_type
             self.user_counts = limit.usages
@@ -242,10 +242,10 @@ class LimitChanging(APIView):
     def post(self, request):
         user_id = token_decode(request=request)
 
-        user = self.user_model.objects.get(id=user_id)
+        user = self.user_model.objects.get(id=user_id['id'])
 
         try:
-            premium = Premium.objects.get(user_id=user_id)
+            premium = Premium.objects.get(user_id=user_id['id'])
         except Premium.DoesNotExist:
             premium = None
 

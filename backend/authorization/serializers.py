@@ -33,3 +33,9 @@ class DataUserEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = ('first_name', 'last_name', 'email')
+
+
+class UserGetDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['id', 'email', 'first_name', 'last_name', 'data_joined']

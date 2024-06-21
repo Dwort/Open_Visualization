@@ -11,13 +11,13 @@ import urbanization_icon from "../../front_additions/buttons_icon/cityscape.png"
 import add_icon from '../../front_additions/add.png';
 import Header from "../AdditionalFunctionality/Header"
 import Button from 'react-bootstrap/Button';
-import LimitProcessing from "../AdditionalFunctionality/LimitProcessing";
+import { apiRequestFunctions } from "../AdditionalFunctionality/ApiRequestFunctions";
 
 
 function ChartPage() {
     const [buttonDisabled, setButtonDisabled] = useState(false);
 
-    const { LimitChecking, handleLimit } = LimitProcessing();
+    const { LimitChecking, handleLimit } = apiRequestFunctions();
 
     useEffect(() => {
         const limit = async () => {

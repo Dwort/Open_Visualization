@@ -1,4 +1,5 @@
-from authorization.serializers import UserRegistrationSerializer, UserLoginSerializer, DataUserEditSerializer
+from authorization.serializers import (UserRegistrationSerializer, UserLoginSerializer, DataUserEditSerializer,
+                                       UserGetDataSerializer)
 from rest_framework.views import APIView
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny
@@ -10,7 +11,7 @@ from django.db import DatabaseError
 from django.contrib.auth import get_user_model
 from premium.models import Premium, Limits
 from .utils import generate_access_token
-from django.core.cache import cache
+from backend.decorators import caching, delete_cache
 import stripe
 from backend.utils import token_decode
 
@@ -76,21 +77,9 @@ class UserViewAPI(APIView):
         self.premium = ''
         self.limit = 0
 
-    # @method_decorator(usage_counter)
+    @caching
     def get(self, request):
-        # user_token = request.headers.get("Authorization").split(' ')[1]
-        #
-        # if not user_token:
-        #     raise AuthenticationFailed('Unauthenticated user!')
-        #
-        # payload = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
-
         payload = token_decode(request=request)
-
-        cached_user_data = cache.get(f"cached_user_data_{payload['id']}")
-
-        if cached_user_data:
-            return Response(cached_user_data, status=status.HTTP_200_OK)
 
         try:
             self.premium = Premium.objects.get(user_id=payload['id']).premium_type
@@ -104,15 +93,13 @@ class UserViewAPI(APIView):
 
         user_data = get_user_model().objects.filter(id=payload['id']).first()
 
-        user_serializer = UserRegistrationSerializer(user_data)
+        user_serializer = UserGetDataSerializer(user_data)
 
         response_data = {
             "user_data": user_serializer.data,
             "user_premium": self.premium,
             "user_limit": self.limit,
         }
-
-        cache.set(f"cached_user_data_{payload['id']}", response_data, timeout=60)
 
         return Response(response_data, status=status.HTTP_200_OK)
 
@@ -121,8 +108,10 @@ class UserLogoutViewAPI(APIView):
     authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
 
+    @delete_cache(key="UserViewAPI")
     def get(self, request):
         user_token = request.headers.get("Authorization").split(' ')[1]
+        user_id = token_decode(request=request)
 
         if user_token:
             response = Response()
@@ -140,7 +129,8 @@ class UserLogoutViewAPI(APIView):
 class UserDeleteViewAPI(APIView):
     user = get_user_model()
 
-    def post(self, request):
+    @delete_cache(key="UserViewAPI")
+    def delete(self, request):
         user_data = token_decode(request=request)
 
         try:
@@ -171,6 +161,7 @@ class UserDeleteViewAPI(APIView):
 class EditUserData(APIView):
     user = get_user_model()
 
+    @delete_cache(key="UserViewAPI")
     def patch(self, request):
         user_data = token_decode(request=request)
 
@@ -179,6 +170,7 @@ class EditUserData(APIView):
         serializer = DataUserEditSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

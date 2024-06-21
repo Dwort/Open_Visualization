@@ -2,6 +2,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import *
 from .graph_apis import *
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
 class GetRestApiInfo:
@@ -35,6 +37,8 @@ class GetAreaByAlpha(GetRestApiInfo, APIView):
 
 
 class GetPopulationByAlpha(GetRestApiInfo, APIView):
+
+    @method_decorator(cache_page(20*1, key_prefix='get_population_by_alpha'))
     def get(self, request, alpha_code):
         country = Country.objects.get(alpha_code=alpha_code)
 

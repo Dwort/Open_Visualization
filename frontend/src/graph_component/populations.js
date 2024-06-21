@@ -1,15 +1,37 @@
 import React, { useState } from "react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 import { Bar, Line, Pie, Doughnut } from "react-chartjs-2";
 import CountryInfoApp from "./page_functions/countries_checkbox";
-import './graph_styles/population-area_style.css'
+import './graph_styles/population-area_style.css';
 import Header from "../main_functional_folder/AdditionalFunctionality/Header";
 
+// Реєстрація компонентів Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  LineElement,
+  PointElement,
+  ArcElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
-function Populations(){
-
+function Populations() {
   const [chartData, setChartData] = useState([]);
   const [chartType, setChartType] = useState('Bar');
-
 
   const graph_data = {
     labels: chartData.map((data) => data.country_name),
@@ -24,37 +46,37 @@ function Populations(){
     ]
   };
 
-  const bar_line_options= {
+  const bar_line_options = {
     layout: {
       padding: 20
     },
     scales: {
-    y: {
-      ticks: {
-        callback: function(value, index, values) {
-          if (value === 0) {
-            return '0';
-          }
+      y: {
+        ticks: {
+          callback: function(value, index, values) {
+            if (value === 0) {
+              return '0';
+            }
 
-          let suffixes = ["", "K", "M", "B"];
-          let order = Math.floor(Math.log(Math.abs(value)) / Math.log(1000));
-          let suffix = suffixes[order];
-          let shortValue = value / Math.pow(1000, order);
+            let suffixes = ["", "K", "M", "B"];
+            let order = Math.floor(Math.log(Math.abs(value)) / Math.log(1000));
+            let suffix = suffixes[order];
+            let shortValue = value / Math.pow(1000, order);
 
-          if (shortValue % 1 !== 0) {
-            shortValue = shortValue.toFixed(1);
-          }
+            if (shortValue % 1 !== 0) {
+              shortValue = shortValue.toFixed(1);
+            }
 
-          return shortValue + suffix;
-        },
-        color: 'black'
+            return shortValue + suffix;
+          },
+          color: 'black'
+        }
+      },
+      x: {
+        ticks: {
+          color: 'black'
+        }
       }
-    },
-    x: {
-      ticks: {
-        color: 'black'
-      }
-    }
     },
     plugins: {
       title: {
@@ -68,11 +90,6 @@ function Populations(){
       legend: {
         display: false,
       }
-    },
-    LinearScale: {
-      type: 'linear',
-      display: true,
-      position: 'left'
     }
   };
 
@@ -96,13 +113,10 @@ function Populations(){
         align: 'center'
       },
     },
-    }
+  };
 
   return (
     <div className="main-container">
-      {/*<div className="head-container">*/}
-      {/*  <img src={logo} alt="Логотип компанії" className="logo" />*/}
-      {/*</div>*/}
       <Header />
       <div className="body-container">
         <div className="select-container">

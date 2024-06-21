@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Col, Button, Row, Container, Card, Form} from "react-bootstrap";
-import HeadLogo from "../../front_additions/bar-chart.png";
 import axios from "axios";
 import {Link} from "react-router-dom";
 
@@ -9,6 +8,8 @@ export default function Login() {
 
   const [validated, setValidated] = useState(false);
   const [loginError, setLoginError] = useState(null)
+  const HeadLogo = 'https://open-visualization-s3-storage.s3.us-east-2.amazonaws.com/ProjectFiles/company-logo.png';
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;

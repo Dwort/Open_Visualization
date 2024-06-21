@@ -13,7 +13,7 @@ const DeleteAccount = () => {
             const token = Cookies.get("access_token")
 
             try {
-                const response = await axios.post('http://127.0.0.1:8000/api/user/delete/',{},{
+                const response = await axios.delete('http://127.0.0.1:8000/api/user/delete/',{
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

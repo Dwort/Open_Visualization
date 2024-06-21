@@ -1,36 +1,46 @@
-from django.conf import settings
+from rest_framework import status
 from rest_framework.response import Response
 from functools import wraps
-import jwt
+from .utils import token_decode
+from django.core.cache import cache
 
 
-def usage_counter(inner_func):
-    @wraps(inner_func)
-    def wrapper(request, *args, **kwargs):
-        # user_token = request.headers.get("Authorization").split(' ')[1]
-        # user_data = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
-        #
-        # result = inner_func(request, *args, **kwargs)
-        #
-        # print(f"User ID - {user_data.id} ! And function name where is decorator - {inner_func.__name__} !")
-        user_token = request.headers.get("Authorization")
+def caching(func):
+    @wraps(func)
+    def wrapper(self, request, *args, **kwargs):
+        if not request.headers.get("Authorization"):
+            return Response({"message": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not user_token:
-            return Response({"message": "Authorization header missing."}, status=400)
+        user_data = token_decode(request=request)
 
-        user_token = user_token.split(' ')[1]  # Extract the token
+        cache_key = f"{self.__class__.__name__}_{func.__name__}_{user_data['id']}"
 
-        try:
-            user_data = jwt.decode(user_token, settings.SECRET_KEY, algorithms=['HS256'])
-        except jwt.ExpiredSignatureError:
-            return Response({"message": "Expired token."}, status=401)
-        except jwt.InvalidTokenError:
-            return Response({"message": "Invalid token."}, status=401)
+        cached_data = cache.get(cache_key)
 
-        result = inner_func(request, *args, **kwargs)  # Call inner function and store the result
+        if cached_data:
+            return Response(cached_data, status=status.HTTP_200_OK)
 
-        print(f"User ID - {user_data.get('id')}! And function name where the decorator is applied - {inner_func.__name__}!")
+        response = func(self, request, *args, **kwargs)  # Call inner function and store the response
 
-        return result
+        if response.status_code == status.HTTP_200_OK:
+            cache.set(cache_key, response.data, timeout=60 * 2)
+
+        return response
 
     return wrapper
+
+
+def delete_cache(key):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(self, request, *args, **kwargs):
+            if not request.headers.get("Authorization"):
+                return Response({"message": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_data = token_decode(request=request)
+            cache_key = f"{key}_get_{user_data['id']}"
+
+            cache.delete(cache_key)
+            return func(self, request, *args, **kwargs)
+        return wrapper
+    return decorator

@@ -3,14 +3,14 @@ import Header from "../AdditionalFunctionality/Header";
 import "../auth/auth_style/user_page_style.css";
 import "./burger_menu_styles/UserProjects_CSS.css";
 import OffCanvas from "./Offcanvas";
-import LimitProcessing from "../AdditionalFunctionality/LimitProcessing";
+import { apiRequestFunctions } from "../AdditionalFunctionality/ApiRequestFunctions";
 import AddUserFile from '../AdditionalFunctionality/AddUserFile';
 import ProjectBlock from "../AdditionalFunctionality/ProjectBlocks";
 
 
 function UserProjectsPage() {
     const [userProjects, setUserProjects] = useState([]);
-    const { GetUserProjects } = LimitProcessing();
+    const { GetUserProjects } = apiRequestFunctions();
     const [showModal, setShowModal] = useState(false);
     const Add = 'https://open-visualization-s3-storage.s3.us-east-2.amazonaws.com/ProjectFiles/add.png';
 
@@ -31,20 +31,6 @@ function UserProjectsPage() {
 
     }, []);
 
-    // TEMP FUNCTIONS FOR TEST CLICKABLE OF TWO BUTTONS. AFTER THAT DELETE THEY AND REPLACE TO FUNCTION FROM ANOTHER FILES!
-
-    const handleFunctionButton = () => {
-        console.log('Pressed card button!');
-    }
-
-    const handleEditButton = () => {
-        console.log('Pressed edit button!');
-    }
-
-    // END OF TEST FUNCTIONS
-
-
-
     return (
          <div className="user-page-main">
             <Header />
@@ -58,12 +44,12 @@ function UserProjectsPage() {
                     { userProjects.length > 0 ? (
                         <div className="blocks">
                             {userProjects.map((project, index) => (
-                                <div key={index} onClick={() => handleFunctionButton()}>
+                                <div key={index} >
                                     {/*<div className="files-button-block">*/}
                                         <ProjectBlock
                                             userProject={project}
-                                            onHandleFunctionClick={() => handleFunctionButton()}
-                                            onHandleEditClick={() => handleEditButton()}
+                                            // onHandleFunctionClick={() => handleFunctionButton()}
+                                            // onHandleEditClick={() => handleEditButton(project)}
                                         />
                                     {/*</div>*/}
                                 </div>
