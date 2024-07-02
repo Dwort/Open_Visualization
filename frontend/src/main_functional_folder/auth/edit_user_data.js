@@ -3,12 +3,12 @@ import axios from "axios";
 import Cookies from 'js-cookie';
 import Header from "../AdditionalFunctionality/Header";
 import "./auth_style/user_page_style.css"
-import Back from "../../front_additions/arrow-left.png"
+import Back from "../../front_additions/arrow-left.png";
 import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form"
+import Form from "react-bootstrap/Form";
 import {Link, useLocation} from "react-router-dom";
-import PasswordChange from "../../front_additions/change-password.png"
-import "./auth_style/logout.css"
+import PasswordChange from "../../front_additions/change-password.png";
+import "./auth_style/logout.css";
 import {InputGroup} from "react-bootstrap";
 import DeleteAccount from "./delete_account";
 
@@ -91,8 +91,14 @@ const EditUserData = () => {
                             />
                         </InputGroup>
 
-                        <Button variant="primary" type="submit" title="Submit new data" className="edit-submit-button"
-                            >Submit</Button>
+                        <Button
+                            variant="primary"
+                            type="submit"
+                            title="Submit new data"
+                            className="edit-submit-button"
+                        >
+                            Submit
+                        </Button>
 
                         <p>*Be careful with data editing! Some data or your settings can be corrupted!</p>
                     </Form>

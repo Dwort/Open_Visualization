@@ -6,6 +6,7 @@ from user_filehub.views import (
     DeleteFileAPI,
     EditFileNameAPI,
     EditFileFunctionsAPI,
+    DownloadUserFileAPI,
 )
 
 urlpatterns = [
@@ -14,4 +15,5 @@ urlpatterns = [
     path('files/delete/', DeleteFileAPI.as_view()),
     path('files/edit-name/', EditFileNameAPI.as_view()),
     path('files/edit-functions/', EditFileFunctionsAPI.as_view()),
+    path('files/download/', DownloadUserFileAPI.as_view()),
 ]

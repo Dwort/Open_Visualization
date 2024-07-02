@@ -1,7 +1,7 @@
 import React, {useState} from "react";
-import {Card, OverlayTrigger, Popover, ListGroup} from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./AdditionalFunctionality_styles/ProjectBlock_style.css";
+import "../AdditionalFunctionality/AdditionalFunctionality_styles/ProjectBlock_style.css";
+import {Card, OverlayTrigger, Popover, ListGroup} from "react-bootstrap";
 import { EditFileMenu } from "./ApiRequestFunctions";
 import Spinner from "react-bootstrap/Spinner";
 
@@ -17,10 +17,12 @@ const editName = 'https://open-visualization-s3-storage.s3.us-east-2.amazonaws.c
 const editDelete = 'https://open-visualization-s3-storage.s3.us-east-2.amazonaws.com/ProjectFiles/edit-delete.png';
 const editFunctions = 'https://open-visualization-s3-storage.s3.us-east-2.amazonaws.com/ProjectFiles/edit-functions.png';
 const editDownload = 'https://open-visualization-s3-storage.s3.us-east-2.amazonaws.com/ProjectFiles/edit-download.png';
+
 const ProjectBlock = ({userProject}) => {
     const [showNameModal, setShowNameModal] = useState(false);
+    const [showFunctionsModal, setShowFunctionsModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const { DeleteUserFile, EditFileName } = EditFileMenu();
+    const { DeleteUserFile, EditFileName, EditFileFunctions, DownloadFileRequest } = EditFileMenu();
 
     const colorMapping = {
         statistics: '#6d06a1',
@@ -60,7 +62,7 @@ const ProjectBlock = ({userProject}) => {
         }
     };
 
-        // TEMP FUNCTIONS FOR TEST CLICKABLE OF TWO BUTTONS. AFTER THAT DELETE THEY AND REPLACE TO FUNCTION FROM ANOTHER FILES!
+    // TEMP FUNCTIONS FOR TEST CLICKABLE OF TWO BUTTONS. AFTER THAT DELETE THEY AND REPLACE TO FUNCTION FROM ANOTHER FILES!
 
     const handleFunctionButton = () => {
         console.log('Pressed card button!');
@@ -87,7 +89,7 @@ const ProjectBlock = ({userProject}) => {
                         action
                         onClick={(e) => {
                             e.stopPropagation();
-                        //     Add change function
+                            setShowFunctionsModal(true);
                         }}
                     >
                         <img src={editFunctions} alt="editFunctions" className="edit-file-function-button"/>
@@ -97,7 +99,7 @@ const ProjectBlock = ({userProject}) => {
                         action
                         onClick={(e) => {
                             e.stopPropagation();
-                        //     Add download function
+                            DownloadFileRequest(userProject.id, userProject.file_name);
                         }}
                     >
                         <img src={editDownload} alt="editDownload" className="edit-file-function-button"/>
@@ -118,11 +120,11 @@ const ProjectBlock = ({userProject}) => {
     return (
         <>
             <Card
-                className="card-projects-container"
                 style={getBorderColorStyles()}
                 onClick={handleFunctionButton}
+                className="card-files-projects-container"
             >
-                <Card.Img variant="top" src={imgDict[userProject.file_type]} className="card-img-block"/>
+                <Card.Img variant="top" src={imgDict[userProject.file_type]} className="card-img-block" />
                 <Card.Body className="card-body-container">
                     <div className="edit-dots-block">
                         <OverlayTrigger trigger="focus" placement="right" overlay={editButtonMenu}>
@@ -155,10 +157,20 @@ const ProjectBlock = ({userProject}) => {
             <LoadingOverlay isLoading={isLoading} />
             {showNameModal && (
                 <EditFileName
+                    fileId={userProject.id}
                     fileName={userProject.file_name}
                     setIsLoading={setIsLoading}
                     show={showNameModal}
                     onHide={() => setShowNameModal(false)}
+                />
+            )}
+            {showFunctionsModal && (
+                <EditFileFunctions
+                    fileId={userProject.id}
+                    fileFunctions={userProject.file_functions}
+                    setIsLoading={setIsLoading}
+                    show={showFunctionsModal}
+                    onHide={() => setShowFunctionsModal(false)}
                 />
             )}
         </>
@@ -176,10 +188,3 @@ const LoadingOverlay = ({ isLoading }) => {
 };
 
 export default ProjectBlock;
-
-// <img src={imageUrl} alt="PDF Icon" />
-// <p>File Name: {project.file_name}</p>
-//                                         <p>File Type: {project.file_type}</p>
-//                                         <p>S3 File Link: {project.s3_file_link}</p>
-//                                         <p>File Functions: {Array.isArray(project.file_functions) ? project.file_functions.join(', ') : ''}</p>
-//                                         <p>Uploading Date: {project.uploading_date}</p>

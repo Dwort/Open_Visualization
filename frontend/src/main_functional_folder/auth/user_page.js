@@ -4,11 +4,11 @@ import Cookies from 'js-cookie';
 import Header from "../AdditionalFunctionality/Header";
 import Logout from "./logout";
 import {Link} from "react-router-dom";
-import "./auth_style/user_page_style.css"
+import "./auth_style/user_page_style.css";
 import OffCanvas from "../burger_menu_files/Offcanvas";
-import Edit from "../../front_additions/edit.png"
-import Spark from "../../front_additions/shining.png"
-import ErrorImg from "../../front_additions/404.gif"
+import Edit from "../../front_additions/edit.png";
+import Spark from "../../front_additions/shining.png";
+import ErrorImg from "../../front_additions/404.gif";
 
 
 const UserProfile = () => {

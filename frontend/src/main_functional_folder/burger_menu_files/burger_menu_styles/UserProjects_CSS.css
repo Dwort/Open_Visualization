@@ -132,15 +132,19 @@
 /*------------------------------------------------------------*/
 
 .add-modal-footer-block {
-  position: absolute; /* Make the footer absolute-positioned */
-  bottom: 0;             /* Position it at the bottom of the Modal.Body */
-  left: 0;                /* Align it to the left edge */
-  right: 0;               /* Stretch it horizontally to fill the entire width */
-  height: 60px;            /* Set the fixed height to 60px */
-  background-color: #fff;  /* Optional: Set a background color */
-  display: flex;          /* Optional: Allow for horizontal centering of buttons */
-  justify-content: center; /* Optional: Center buttons horizontally */
-  align-items: center;    /* Optional: Center buttons vertically */
+    position: absolute; /* Make the footer absolute-positioned */
+    bottom: 0;             /* Position it at the bottom of the Modal.Body */
+    left: 0;                /* Align it to the left edge */
+    right: 0;               /* Stretch it horizontally to fill the entire width */
+    height: 60px;            /* Set the fixed height to 60px */
+    background-color: #fff;  /* Optional: Set a background color */
+    display: flex;          /* Optional: Allow for horizontal centering of buttons */
+    justify-content: end; /* Optional: Center buttons horizontally */
+    align-items: center;    /* Optional: Center buttons vertically */
+}
+
+.add-modal-footer-block button {
+  margin-top: -1px;
 }
 
 /*----------------------------------------------------------*/

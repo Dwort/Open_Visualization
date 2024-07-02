@@ -11,17 +11,16 @@ class FileSerializer(serializers.ModelSerializer):
 class FileGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFileData
-        fields = ['file_name', 'file_type', 's3_file_link', 'file_functions', 'uploading_date']
+        fields = ['id', 'file_name', 'file_type', 'file_functions', 'uploading_date']
 
 
 class EditFileNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserFileData
-        fields = ['file_name', 's3_file_link']
+        fields = ['file_name']
 
     def update(self, instance, validated_data):
         instance.file_name = validated_data.get('file_name', instance.file_name)
-        instance.s3_file_link = validated_data.get('s3_file_link', instance.s3_file_link)
         instance.save()
         return instance
 

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'premium',
     'user_filehub',
     'storages',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -97,6 +98,10 @@ REST_FRAMEWORK = {
     'DEFAULT_CACHE_HEADERS': True,  # Включення кеш-заголовків у відповідях
     'DEFAULT_CACHE_BACKEND': 'django_redis.cache.RedisCache',  # Використовуйте кеш у пам'яті
 }
+
+# 'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework_simplejwt.authentication.JWTAuthentication',
+#     ),
 
 ROOT_URLCONF = 'backend.urls'
 

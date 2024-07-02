@@ -206,12 +206,11 @@ html, body {
 }
 
 .edit-submit-button {
-    display: flex;
-    margin-top: 30px;
+    margin-top: 10px;
+    margin-bottom: -10px;
     width: 200px;
-    font-size: 30px;
+    font-size: 20px;
     font-weight: bold;
-    height: auto;
 }
 
 /* End edit page styles */

@@ -1,15 +1,17 @@
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.conf import settings
 from rest_framework import status
 from storages.backends.s3boto3 import S3Boto3Storage
 from botocore.exceptions import ClientError
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth import get_user_model
+from user_filehub.models import UserFileData
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError
 from .serializers import FileSerializer, FileGroupSerializer, EditFileNameSerializer, EditFileFunctionSerializer
 from backend.decorators import caching, delete_cache
 from backend.utils import token_decode
+import boto3
 import json
 
 
@@ -87,9 +89,9 @@ class UserFilesAPI(APIView):
 
         for file in files:
             files_group.append({
+                'id': file.id,
                 'file_name': file.file_name,
                 'file_type': file.file_type,
-                's3_file_link': file.s3_file_link,
                 'file_functions': file.file_functions,
                 'uploading_date': file.uploading_date
             })
@@ -100,23 +102,17 @@ class UserFilesAPI(APIView):
 
 
 class DeleteFileAPI(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    user = get_user_model()
 
     @delete_cache(key="UserFilesAPI")
     def delete(self, request):
-        user_id = token_decode(request=request)
-        file_name = request.data.get('fileName')
+        file_id = request.query_params.get('file_id')
 
         try:
-            user = self.user.objects.get(id=user_id['id'])
-            file = user.files.get(file_name=file_name)
-            # file = self.user.files.get(user_id=user_id['id'], file_name=file_name)
-        except ObjectDoesNotExist:
+            file = UserFileData.objects.get(id=file_id)
+        except UserFileData.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        file_path = f'Users-Files/{file_name}'
+        file_path = f'Users-Files/{file.file_name}'
 
         try:
             s3_storage = S3Boto3Storage()
@@ -130,27 +126,22 @@ class DeleteFileAPI(APIView):
 
 
 class EditFileNameAPI(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    user = get_user_model()
+    serializer = EditFileNameSerializer
 
     @delete_cache(key="UserFilesAPI")
     def patch(self, request):
-        user_id = token_decode(request=request)
-        old_file_name = request.data.get('oldFileName')
+        file_id = request.query_params.get('file_id')
         new_file_name = request.data.get('newFileName')
 
-        if not old_file_name or not new_file_name:
-            return Response({"error": "Both oldFileName and newFileName must be provided."},
-                            status=status.HTTP_400_BAD_REQUEST)
+        if not new_file_name:
+            return Response({"error": "File name must be provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            user = self.user.objects.get(id=user_id['id'])
-            file = user.files.get(file_name=old_file_name)
-        except ObjectDoesNotExist:
-            return Response({"error": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
+            file = UserFileData.objects.get(id=file_id)
+        except UserFileData.DoesNotExist:
+            return Response({"error": "File not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        old_file_path = f'Users-Files/{old_file_name}'
+        old_file_path = f'Users-Files/{file.file_name}'
         new_file_path = f'Users-Files/{new_file_name}'
 
         try:
@@ -167,36 +158,65 @@ class EditFileNameAPI(APIView):
         except ClientError as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        serializer = EditFileNameSerializer(file, data={'file_name': new_file_name,
-                                                        's3_file_link': s3_storage.url(new_file_path)}, partial=True)
+        serializer = self.serializer(file, data={'file_name': new_file_name}, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Validation error."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class EditFileFunctionsAPI(APIView):
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-    user = get_user_model()
+    serializer = EditFileFunctionSerializer
 
     @delete_cache(key="UserFilesAPI")
     def patch(self, request):
-        user_id = token_decode(request=request)
-        file_name = request.data.get('fileName')
+        file_id = request.query_params.get('file_id')
         edited_functions = request.data.get('functions')
 
-        if not file_name or not isinstance(edited_functions, list):
+        if not file_id or not isinstance(edited_functions, list):
             return Response({"error": "Invalid data provided."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            file = self.user.files.get(user_id=user_id['id'], file_name=file_name)
-        except ObjectDoesNotExist:
-            return Response({"error": "Object not found."}, status=status.HTTP_404_NOT_FOUND)
+            file = UserFileData.objects.get(id=file_id)
+        except UserFileData.DoesNotExist:
+            return Response({"error": "File not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = EditFileFunctionSerializer(file, data={"file_function": edited_functions}, partial=True)
+        serializer = self.serializer(file, data={"file_functions": edited_functions}, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DownloadUserFileAPI(APIView):
+
+    def get(self, request):
+        file_id = request.query_params.get('file_id')
+
+        if not file_id:
+            return Response({'error': 'File id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            file = UserFileData.objects.get(id=file_id)
+        except UserFileData.DoesNotExist:
+            return Response({'error': 'File does not exist!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+            region_name=settings.AWS_S3_REGION_NAME,
+        )
+
+        file_name = f'Users-Files/{file.file_name}'
+
+        try:
+            url = s3_client.generate_presigned_url(
+                'get_object',
+                Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': file_name},
+                ExpiresIn=3600
+            )
+            return Response({'url': url})
+        except (NoCredentialsError, PartialCredentialsError) as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
