@@ -48,7 +48,7 @@ class AddUserFileAPI(APIView):
         except ClientError as e:
             return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        user = self.user.objects.get(id=user_id['id'])
+        user = self.user.objects.get(id=user_id['user_id'])
 
         data = {
             'user': user.id,
@@ -77,7 +77,7 @@ class UserFilesAPI(APIView):
     def get(self, request):
         user_id = token_decode(request=request)
 
-        user = self.user.objects.get(id=user_id['id'])
+        user = self.user.objects.get(id=user_id['user_id'])
 
         try:
             files = user.files.all()

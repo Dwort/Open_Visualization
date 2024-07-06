@@ -13,7 +13,7 @@ def caching(func):
 
         user_data = token_decode(request=request)
 
-        cache_key = f"{self.__class__.__name__}_{func.__name__}_{user_data['id']}"
+        cache_key = f"{self.__class__.__name__}_{func.__name__}_{user_data['user_id']}"
 
         cached_data = cache.get(cache_key)
 
@@ -38,7 +38,7 @@ def delete_cache(key):
                 return Response({"message": "Authorization header missing."}, status=status.HTTP_400_BAD_REQUEST)
 
             user_data = token_decode(request=request)
-            cache_key = f"{key}_get_{user_data['id']}"
+            cache_key = f"{key}_get_{user_data['user_id']}"
 
             cache.delete(cache_key)
             return func(self, request, *args, **kwargs)

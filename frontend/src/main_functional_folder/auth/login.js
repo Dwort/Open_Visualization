@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Col, Button, Row, Container, Card, Form} from "react-bootstrap";
 import axios from "axios";
 import {Link} from "react-router-dom";
+import Cookies from "js-cookie";
 
 
 export default function Login() {
@@ -26,9 +27,11 @@ export default function Login() {
           password: form.elements.formBasicPassword.value,
         });
 
-        const access_token = response.data.access_token;
+        let access_token = response.data.access;
+        let refresh_token = response.data.refresh;
 
-        document.cookie = `access_token=${access_token};max-age=86400`;
+        Cookies.set('access_token', access_token, { expires: 5 / (24 * 60) });
+        Cookies.set('refresh_token', refresh_token, { expires: 1 });
 
         window.location.href = '/user';
 

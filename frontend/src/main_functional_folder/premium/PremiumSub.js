@@ -3,23 +3,25 @@ import axios from "axios";
 import Header from "../AdditionalFunctionality/Header";
 import "../main_page_dir_styles/premium_sub_style.css"
 import Cookies from "js-cookie";
+import getUserToken from "../AdditionalFunctionality/RefreshTokenAuthentication";
 
 
 function PremiumSub() {
 
     const handleGetButton = (buyAPI) => {
-        const token = Cookies.get("access_token");
-        if (token && buyAPI){
-             buySubmit(buyAPI, token);
+        if (Cookies.get("access_token") && buyAPI){
+             buySubmit(buyAPI).catch(error => {
+                 alert(error);
+             });
         }
         else {
              alert('YOU NEED A REGISTER OR LOG IN FOR BUYING PREMIUM STATUS!!!');
         }
     }
 
-    const buySubmit = async (selectedSub, token) => {
+    const buySubmit = async (selectedSub) => {
         try {
-
+            let token = await getUserToken();
             const response = await axios.post("http://127.0.0.1:8000/api/premium/buy/", {
                 'price': selectedSub
             }, {

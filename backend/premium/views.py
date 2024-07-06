@@ -54,7 +54,7 @@ class CreatePortalSessionView(APIView):
         user_id = token_decode(request=request)
 
         try:
-            premium = Premium.objects.get(user_id=user_id['id'])
+            premium = Premium.objects.get(user_id=user_id['user_id'])
         except Premium.DoesNotExist as e:
             return Response({'error': str(e)}, status=status.HTTP_404_NOT_FOUND)
 
@@ -151,7 +151,7 @@ class WebhookView(APIView):
                                                                                                new_price_id,
                                                                                                subscription_id)
             else:
-                print('Data updated %s' % event['id'])
+                # print('Data updated %s' % event['id'])
 
                 self.response_handler, self.response_status = ({'status': 'success',
                                                                 'response': 'Data updated successfully!'},
@@ -171,7 +171,7 @@ class WebhookView(APIView):
                                                                 'response': 'There is no subscription'},
                                                                status.HTTP_404_NOT_FOUND)
 
-            print('Subscription canceled: %s' % event['id'])
+            # print('Subscription canceled: %s' % event['id'])
 
         elif event['type'] == 'customer.deleted':
             self.response_handler, self.response_status = ({'status': 'success',
@@ -211,7 +211,7 @@ class LimitChecking(APIView):
         user_id = token_decode(request=request)
 
         try:
-            limit = Limits.objects.get(user_id=user_id['id'])
+            limit = Limits.objects.get(user_id=user_id['user_id'])
 
             self.premium_type = limit.premium_type
             self.user_counts = limit.usages
@@ -242,10 +242,10 @@ class LimitChanging(APIView):
     def post(self, request):
         user_id = token_decode(request=request)
 
-        user = self.user_model.objects.get(id=user_id['id'])
+        user = self.user_model.objects.get(id=user_id['user_id'])
 
         try:
-            premium = Premium.objects.get(user_id=user_id['id'])
+            premium = Premium.objects.get(user_id=user_id['user_id'])
         except Premium.DoesNotExist:
             premium = None
 

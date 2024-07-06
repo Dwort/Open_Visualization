@@ -3,36 +3,31 @@ import '../main_page_dir_styles/Header.css'
 import UserLogo from '../../front_additions/user.png'
 import {Link} from "react-router-dom";
 import Logo from "../../front_additions/Logo.jpg"
+import getUserToken from "./RefreshTokenAuthentication";
 
 const Header = () => {
 
      const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    useEffect(() => {
+    useEffect( () => {
+        const fetchData = async () => {
+            try {
+                const token = await getUserToken();
+                if (token) {
+                    setIsLoggedIn(true);
+                }
+            } catch (error) {
+                console.error('Error with getting user token -> ', error);
+                // Можливо, додаткові дії при помилці, наприклад, перенаправлення на сторінку входу
+            }
+        };
 
-        const token = getCookie("access_token");
-        if (token) {
-            setIsLoggedIn(true);
-        }
+        fetchData();
     }, []);
 
-    const getCookie = (name) => {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(";").shift();
+    const headerDirection = (direction) => {
+      window.location.href = `/${direction}`
     };
-
-    function registration () {
-        window.location.href = '/registration'
-    }
-
-    function login () {
-        window.location.href = '/login'
-    }
-
-    function userProfile () {
-        window.location.href = '/user'
-    }
 
     return (
         <div className="header">
@@ -48,14 +43,14 @@ const Header = () => {
                 <a href='/premium' >Pricing</a>
                 {isLoggedIn ? (
                     <>
-                        <img src={UserLogo} alt="user-icon" className="user-page-icon" onClick={userProfile} />
+                        <img src={UserLogo} alt="user-icon" className="user-page-icon" onClick={() => headerDirection('user')} />
                     </>
                 ) : (
                     <>
-                        <button className="login-button" onClick={login}>
+                        <button className="login-button" onClick={() => headerDirection('login')}>
                             Log in
                         </button>
-                        <button className="register-button" onClick={registration}>
+                        <button className="register-button" onClick={() => headerDirection('registration')}>
                             Sign up
                         </button>
                     </>

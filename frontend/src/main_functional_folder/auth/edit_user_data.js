@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import Cookies from 'js-cookie';
 import Header from "../AdditionalFunctionality/Header";
 import "./auth_style/user_page_style.css"
 import Back from "../../front_additions/arrow-left.png";
@@ -11,6 +10,7 @@ import PasswordChange from "../../front_additions/change-password.png";
 import "./auth_style/logout.css";
 import {InputGroup} from "react-bootstrap";
 import DeleteAccount from "./delete_account";
+import getUserToken from "../AdditionalFunctionality/RefreshTokenAuthentication";
 
 
 
@@ -36,7 +36,7 @@ const EditUserData = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const token = Cookies.get("access_token");
+        let token = await getUserToken();
 
         await axios.patch("http://127.0.0.1:8000/api/user/data-edit/", {
             first_name: firstName,

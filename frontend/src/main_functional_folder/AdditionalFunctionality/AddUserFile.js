@@ -5,9 +5,9 @@ import Form from 'react-bootstrap/Form';
 import {useState, useEffect} from "react";
 import "../burger_menu_files/burger_menu_styles/UserProjects_CSS.css";
 import {InputGroup} from "react-bootstrap";
-import Cookies from "js-cookie";
 import axios from "axios";
 import Spinner from 'react-bootstrap/Spinner';
+import getUserToken from "./RefreshTokenAuthentication";
 
 
 function AddUserFile(props) {
@@ -37,7 +37,7 @@ function AddUserFile(props) {
 
     const fileUploading = async () => {
         const formData = new FormData();
-        const token = Cookies.get('access_token');
+        let token = await getUserToken();
 
         const parts = selectedFile.name.split('.');
         const extension = parts[parts.length - 1];

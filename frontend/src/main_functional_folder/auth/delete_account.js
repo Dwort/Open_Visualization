@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import "./auth_style/logout.css"
 import Cookies from "js-cookie";
+import getUserToken from "../AdditionalFunctionality/RefreshTokenAuthentication";
 
 
 const DeleteAccount = () => {
@@ -10,9 +11,9 @@ const DeleteAccount = () => {
         const confirmDelete = window.confirm("Are you sure you want to delete your account?");
 
         if (confirmDelete) {
-            const token = Cookies.get("access_token")
 
             try {
+                let token = await getUserToken();
                 const response = await axios.delete('http://127.0.0.1:8000/api/user/delete/',{
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -20,14 +21,15 @@ const DeleteAccount = () => {
                 });
 
                 if(response.status === 200) {
-                    Cookies.remove("access_token")
-                    alert("Account successfully deleted. Bye!")
+                    Cookies.remove("access_token");
+                    Cookies.remove("refresh_token");
+                    alert("Account successfully deleted. Bye!");
                     window.location.href = '/';
                 } else {
-                    alert("Error with account deletion. Try again or contact with Tech Support!\n" + response.status)
+                    alert("Error with account deletion. Try again or contact with Tech Support!\n" + response.status);
                 }
             } catch (error) {
-                alert("Bad Request!" + error.status)
+                alert("Bad Request!" + error.status);
             }
         }
     }

@@ -10,15 +10,16 @@ from django.contrib.auth import authenticate
 from django.db import DatabaseError
 from django.contrib.auth import get_user_model
 from premium.models import Premium, Limits
-from .utils import generate_access_token
+# from .utils import generate_access_token
 from backend.decorators import caching, delete_cache
 import stripe
 from backend.utils import token_decode
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class UserRegistrationAPIView(APIView):
     serializer_class = UserRegistrationSerializer
-    authentication_classes = (TokenAuthentication,)
+    # authentication_classes = (TokenAuthentication,)
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -26,10 +27,13 @@ class UserRegistrationAPIView(APIView):
         if serializer.is_valid(raise_exception=True):
             new_user = serializer.save()
             if new_user:
-                access_token = generate_access_token(new_user)
-                data = {'access_token': access_token}
+                refresh = RefreshToken.for_user(new_user)
+                data = {
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                }
                 response = Response(data, status=status.HTTP_201_CREATED)
-                response.set_cookie(key='access_token', value=access_token, httponly=True)
+                # response.set_cookie(key='access_token', value=access_token, httponly=True)
                 return response
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -55,17 +59,20 @@ class UserLoginAPIView(APIView):
             raise AuthenticationFailed('User not found. Try Register!')
 
         if user_instance.is_active:
-            user_access_token = generate_access_token(user_instance)
-            response = Response()
-            response.set_cookie(key='access_token', value=user_access_token, httponly=True)
-            response.data = {
-                'access_token': user_access_token
-            }
+            # user_access_token = generate_access_token(user_instance)
+            # response = Response()
+            # response.set_cookie(key='access_token', value=user_access_token, httponly=True)
+            # response.data = {
+            #     'access_token': user_access_token
+            # }
+            refresh = RefreshToken.for_user(user_instance)
+            response = Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            })
             return response
 
-        return Response({
-            'message': 'Something went wrong! Try again!'
-        }, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'Something went wrong! Try again!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewAPI(APIView):
@@ -82,16 +89,16 @@ class UserViewAPI(APIView):
         payload = token_decode(request=request)
 
         try:
-            self.premium = Premium.objects.get(user_id=payload['id']).premium_type
+            self.premium = Premium.objects.get(user_id=payload['user_id']).premium_type
         except Premium.DoesNotExist:
             self.premium = ''
 
         try:
-            self.limit = Limits.objects.get(user_id=payload['id']).usages
+            self.limit = Limits.objects.get(user_id=payload['user_id']).usages
         except Limits.DoesNotExist:
             self.limit = 0
 
-        user_data = get_user_model().objects.filter(id=payload['id']).first()
+        user_data = get_user_model().objects.filter(id=payload['user_id']).first()
 
         user_serializer = UserGetDataSerializer(user_data)
 
@@ -111,7 +118,7 @@ class UserLogoutViewAPI(APIView):
     @delete_cache(key="UserViewAPI")
     def get(self, request):
         user_token = request.headers.get("Authorization").split(' ')[1]
-        user_id = token_decode(request=request)
+        # user_id = token_decode(request=request)
 
         if user_token:
             response = Response()
@@ -134,10 +141,10 @@ class UserDeleteViewAPI(APIView):
         user_data = token_decode(request=request)
 
         try:
-            user = self.user.objects.get(id=user_data['id'])
+            user = self.user.objects.get(id=user_data['user_id'])
 
             try:
-                premium = Premium.objects.get(user_id=user_data['id'])
+                premium = Premium.objects.get(user_id=user_data['user_id'])
             except Premium.DoesNotExist:
                 premium = None
 
@@ -165,7 +172,7 @@ class EditUserData(APIView):
     def patch(self, request):
         user_data = token_decode(request=request)
 
-        user = self.user.objects.get(id=user_data['id'])
+        user = self.user.objects.get(id=user_data['user_id'])
 
         serializer = DataUserEditSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():

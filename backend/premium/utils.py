@@ -94,7 +94,7 @@ class SetPremium:
 class PremiumModify:
     def modifying(self, token, price):
         jwt_data = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
-        user_id = get_user_model().objects.filter(id=jwt_data['id']).first()
+        user_id = get_user_model().objects.filter(id=jwt_data['user_id']).first()
 
         probation_date = int(time.time())
         try:

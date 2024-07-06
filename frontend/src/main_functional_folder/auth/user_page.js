@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import Cookies from 'js-cookie';
 import Header from "../AdditionalFunctionality/Header";
 import Logout from "./logout";
 import {Link} from "react-router-dom";
@@ -9,6 +8,7 @@ import OffCanvas from "../burger_menu_files/Offcanvas";
 import Edit from "../../front_additions/edit.png";
 import Spark from "../../front_additions/shining.png";
 import ErrorImg from "../../front_additions/404.gif";
+import getUserToken from "../AdditionalFunctionality/RefreshTokenAuthentication";
 
 
 const UserProfile = () => {
@@ -22,14 +22,20 @@ const UserProfile = () => {
     };
 
     useEffect(() => {
-        const token = Cookies.get("access_token");
+        const uploadUserData = async () => {
+            try {
+                const token = await getUserToken();
+                if (token) {
+                    await getUserData(token);
+                }
+            } catch (error) {
+                console.error('Error with refreshing token -> ', error);
+            }
+        };
 
-        if (token) {
-            getUserData(token).catch((error) => {
-                alert("Wait a minute and try again or connect with Tech support!");
-                console.error('Error with getting user data -> ', error);
-            });
-        }
+        uploadUserData().catch(error => {
+            alert(error);
+        });
     }, []);
 
     const getUserData = async (token) => {

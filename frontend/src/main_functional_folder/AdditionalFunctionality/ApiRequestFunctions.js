@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../AdditionalFunctionality/AdditionalFunctionality_styles/ProjectBlock_style.css";
+import getUserToken from "./RefreshTokenAuthentication";
 import axios from "axios";
-import Cookies from "js-cookie";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {InputGroup} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-// import fileDownload from 'js-file-download';
 
 
 export const apiRequestFunctions = () => {
 
-    const token = Cookies.get("access_token");
     const LimitChecking = async () => {
         try {
+            let token = await getUserToken();
             const response = await axios.get('http://127.0.0.1:8000/api/premium/limit-checking/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -36,6 +35,7 @@ export const apiRequestFunctions = () => {
 
     const handleLimit = async (type, direction) => {
 
+        let token = await getUserToken();
         await axios.post('http://127.0.0.1:8000/api/premium/limit-changing/', {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -52,6 +52,7 @@ export const apiRequestFunctions = () => {
     const GetUserProjects = async () => {
 
         try {
+            let token = await getUserToken();
             const response = await axios.get('http://127.0.0.1:8000/api/files/', {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -73,7 +74,6 @@ export const apiRequestFunctions = () => {
 }
 
 export const EditFileMenu = () => {
-    const token = Cookies.get("access_token");
 
     const DeleteUserFile = async (fileName, setIsLoading) => {
         const confirmDelete = window.confirm(`Are you sure you want to delete ${fileName}?`);
@@ -81,6 +81,7 @@ export const EditFileMenu = () => {
         if (confirmDelete) {
             setIsLoading(true);
             try {
+                let token = await getUserToken();
                 const response = await axios.delete('http://127.0.0.1:8000/api/files/delete/', {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -113,6 +114,7 @@ export const EditFileMenu = () => {
             const extension = parts[parts.length - 1];
             setIsLoading(true);
 
+            let token = await getUserToken();
             await axios.patch(`http://127.0.0.1:8000/api/files/edit-name/?file_id=${fileId}`, {
                 newFileName: newFileName + '.' + extension,
             },{
@@ -155,8 +157,7 @@ export const EditFileMenu = () => {
                         data and files are borne by you. However, the company guarantees the security and confidentiality of
                         your uploaded files and data. Your files and data will not be distributed without your consent.
                     </p>
-                    {/*<p>{fileName}</p>*/}
-                     <InputGroup className="change-name-modal-input mb-3">
+                    <InputGroup className="change-name-modal-input mb-3">
                         <InputGroup.Text id="inputGroup-sizing-default">
                             New file name:
                         </InputGroup.Text>
@@ -201,6 +202,7 @@ export const EditFileMenu = () => {
             const newFunctions = Object.keys(checkedFunctions).filter(key => checkedFunctions[key]);
             setIsLoading(true);
 
+            let token = await getUserToken();
             await axios.patch(`http://127.0.0.1:8000/api/files/edit-functions/?file_id=${fileId}`, {
                 functions: newFunctions,
             }, {

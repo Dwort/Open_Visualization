@@ -9,7 +9,7 @@ import Facebook from "../../front_additions/social/facebook.png"
 import Twitter from "../../front_additions/social/twitter.png"
 import Instagram from "../../front_additions/social/instagram.png"
 import axios from "axios";
-import Cookies from "js-cookie";
+import getUserToken from "../AdditionalFunctionality/RefreshTokenAuthentication";
 
 
 function OffCanvas() {
@@ -19,8 +19,9 @@ function OffCanvas() {
   const handleShow = () => setShow(true);
 
   const handleCheck = async () => {
-    const token = Cookies.get("access_token")
+
     try {
+        let token = await getUserToken();
         const response = await axios.post('http://127.0.0.1:8000/api/premium/create-portal-session/', null, {
            headers: {
                     Authorization: `Bearer ${token}`,
